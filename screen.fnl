@@ -90,8 +90,11 @@
                [right])]
      (: scr.my_wibox :setup args))))
 
+(local {:first first} (require :functional))
+
 (awful.screen.connect_for_each_screen
  (fn [scr]
-   (case scr.index
-     1 (set scr.selected_tag.column_count 4)
-     2 (set scr.selected_tag.column_count 1))))
+   ;; leftmost screen is vertical, ergo should have a single column
+   (if (-> scr.geometry.x (= 0))
+       (set scr.selected_tag.column_count 1)
+       (set scr.selected_tag.column_count 4))))
