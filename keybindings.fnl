@@ -2,15 +2,18 @@
 (local gears (require :gears))
 (local hotkeys_popup (require :awful.hotkeys_popup))
 (local menubar (require :menubar))
-(local {: filter : map : count} (require :functional))
+(local {: my_main_menu} (require :menu))
+(local {: filter : count} (require :functional))
 
 ;; (require "awful.hotkeys_popup.keys")
 
-(global modkey :Mod4)
-(global superkey [modkey :Control :Mod1 :Shift])
+(local modkey :Mod4)
+(local superkey [modkey :Control :Mod1 :Shift])
 
 ;; Keyboard map indicator and switcher
 (local my_keyboard_layout (awful.widget.keyboardlayout))
+
+
 
 (fn focus_by_idx [idx c]
   "focus.byidx version that works for all screens"
@@ -143,34 +146,34 @@
  (gears.table.join
   (awful.key [modkey :Control] :Return
              (fn [c]
-               (: c :swap (awful.client.getmaster)))
+               (c:swap (awful.client.getmaster)))
              {:description "move to master"
               :group :client})
-  (awful.key superkey :o (fn [c] (: c :move_to_screen))
+  (awful.key superkey :o (fn [c] (c:move_to_screen))
              {:description "move to screen"
               :group :client})
   (awful.key superkey :f
              (fn [c]
                (set c.fullscreen (not c.fullscreen))
-               (: c :raise))
+               (c:raise))
              {:description :fullscreen :group :client})
   (awful.key superkey :m
              (fn [c]
                (set c.maximized (not c.maximized))
-               (: c :raise))
+               (c:raise))
              {:description :maximize :group :client})
   (awful.key superkey "\\"
              (fn [c]
                (set c.maximized_vertical
                     (not c.maximized_vertical))
-               (: c :raise))
+               (c:raise))
              {:description "maximize vertically"
               :group :client})
   (awful.key superkey "-"
              (fn [c]
                (set c.maximized_horizontal
                     (not c.maximized_horizontal))
-               (: c :raise))
+               (c:raise))
              {:description "maximize horizontally"
               :group :client})))
 
@@ -180,7 +183,7 @@
 (root.buttons
  (gears.table.join
   (awful.button [] 3
-                (fn [] (: my_main_menu :toggle)))
+                (fn [] (my_main_menu:toggle)))
   (awful.button [] 4 awful.tag.viewnext)
   (awful.button [] 5 awful.tag.viewprev)))
 
@@ -208,7 +211,9 @@
                     {:raise true})
      (awful.mouse.client.resize c)))))
 
-{:client_keys
- :global_keys
- :my_keyboard_layout
- :client_buttons}
+{: modkey
+ : superkey
+ : client_keys
+ : global_keys
+ : my_keyboard_layout
+ : client_buttons}

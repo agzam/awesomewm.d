@@ -28,7 +28,6 @@
                           :Kruler
                           :MessageWin  ; kalarm.
                           :Sxiv
-                          :Tor Browser ; Needs a fixed window size to avoid fingerprinting by screen size.
                           :Wpa_gui
                           :veromix
                           :xtightvncviewer]
@@ -67,12 +66,12 @@
    ;; buttons for the titlebar
    (let [buttons (gears.table.join
                   (awful.button nil 1 (fn []
-                                        (: c :emit_signal
+                                        (c:emit_signal
                                          "request::activate"
                                          :titlebar
                                          {:raise true})))
                   (awful.button nil 3 (fn []
-                                        (: c :emit_signal
+                                        (c:emit_signal
                                          "request::activate"
                                          :titlebar
                                          {:raise true})
@@ -100,7 +99,9 @@
 (client.connect_signal
  "mouse::enter"
  (fn [c]
-   (: c :emit_signal "request::activate" :mouse_enter {:raise false})))
+   (c:emit_signal
+    "request::activate"
+    :mouse_enter {:raise false})))
 (client.connect_signal
  :focus
  (fn [c] (set c.border_color beautiful.border_focus)))

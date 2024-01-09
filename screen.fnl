@@ -2,18 +2,19 @@
 (local awful (require :awful))
 (local wibox (require :wibox))
 (local beautiful (require :beautiful))
-(local {:my_keyboard_layout my_keyboard_layout} (require :keybindings))
+(local {: my_keyboard_layout : modkey} (require :keybindings))
+(local {: my_main_menu} (require :menu))
 
 ;; Create a wibox for each screen and add it
 (local
  taglist_buttons
  (gears.table.join
-  (awful.button nil 1 (fn [tag] (: tag :view_only)))
+  (awful.button nil 1 (fn [tag] (tag:view_only)))
   (awful.button [modkey] 1 (fn [tag] (when client.focus
-                                       (: client.focus :move_to_tag tag))))
+                                       (client.focus:move_to_tag tag))))
   (awful.button nil 3 awful.tag.viewtoggle)
   (awful.button [modkey] 3 (fn [tag] (when client.focus
-                                       (: client.focus :toggle_tag tag))))
+                                       (client.focus:toggle_tag tag))))
   (awful.button nil 4 (fn [tag] (awful.tag.viewnext tag.screen)))
   (awful.button nil 5 (fn [tag] (awful.tag.viewprev tag.screen)))))
 
@@ -23,7 +24,7 @@
   (awful.button nil 1 (fn [c]
                         (if (= c client.focus)
                             (set c.minimized true)
-                            (: c :emit_signal
+                            (c:emit_signal
                              "request::activate"
                              :tasklist
                              {:raise true}))))
@@ -88,13 +89,12 @@
                [left]
                [scr.my_tasklist]
                [right])]
-     (: scr.my_wibox :setup args))))
-
-(local {:first first} (require :functional))
+     (scr.my_wibox:setup args))))
 
 (awful.screen.connect_for_each_screen
  (fn [scr]
    ;; leftmost screen is vertical, ergo should have a single column
-   (if (-> scr.geometry.x (= 0))
+   (if (and (< 1 (screen:count))
+            (-> scr.geometry.x (= 0)))
        (set scr.selected_tag.column_count 1)
        (set scr.selected_tag.column_count 4))))
