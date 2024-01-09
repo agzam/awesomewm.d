@@ -10,6 +10,7 @@
 
 (set my_theme.useless_gap (dpi 4))
 (set my_theme.border_width (dpi 1))
+(set my_theme.border_focus "#fcba03")
 (set my_theme.wallpaper "/usr/share/backgrounds/manjaro/ostpv3-l.png")
 
 (beautiful.init my_theme)

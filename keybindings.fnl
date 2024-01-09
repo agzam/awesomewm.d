@@ -1,6 +1,9 @@
 (local awful (require :awful))
 (local gears (require :gears))
 (local hotkeys_popup (require "awful.hotkeys_popup"))
+(local {:filter filter
+        :map map
+        :count count} (require :functional))
 ;; (require "awful.hotkeys_popup.keys")
 
 (global modkey "Mod4")
@@ -8,6 +11,22 @@
 
 ;; Keyboard map indicator and switcher
 (local my_keyboard_layout (awful.widget.keyboardlayout))
+
+(fn focus_by_idx [idx]
+  "focus.byidx version that works for all screens"
+  (set client.focus.marked true)
+  (let [clients (-?> (awful.screen.focused)
+                     (: :get_clients true))
+        marked-ct (->> clients
+                       (filter (fn [c] c.marked))
+                       count)]
+    (when (<= (count clients) marked-ct)
+      (awful.screen.focus_relative -1)
+      (awful.client.getmarked))
+    (awful.client.focus.byidx idx)
+    (when client.focus
+      (: client.focus :raise)
+      (set client.focus.marked true))))
 
 (local
  global_keys
@@ -21,13 +40,13 @@
 
   (awful.key
    [modkey :Control] "."
-   (fn [] (awful.client.focus.byidx 1))
+   (fn [] (focus_by_idx 1))
    {:description "focus next by index"
     :group :client})
 
   (awful.key
    [modkey :Control] ","
-   (fn [] (awful.client.focus.byidx -1))
+   (fn [] (focus_by_idx -1))
    {:description "focus prev by index"
     :group :client})
 
