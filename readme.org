@@ -1,0 +1,4 @@
+
+#+begin_src sh :results verbatim
+git clone git@github.com:agzam/awesomewm.d.git ~/.config/awesome/
+#+end_src
