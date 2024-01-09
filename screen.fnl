@@ -87,14 +87,8 @@
                [right])]
      (: scr.my_wibox :setup args))))
 
-(local naughty (require :naughty))
-
 (awful.screen.connect_for_each_screen
  (fn [scr]
    (case scr.index
      1 (set scr.selected_tag.column_count 4)
-     2 (set scr.selected_tag.column_count 1))
-   
-   (naughty.notify {:title "scr.index"
-                    :text (gears.debug.dump_return
-                           scr.selected_tag.master_count)})))
+     2 (set scr.selected_tag.column_count 1))))

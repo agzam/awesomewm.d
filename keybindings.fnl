@@ -16,7 +16,7 @@
    superkey :s hotkeys_popup.show_help
    {:description "this help" :group :awesome})
   (awful.key
-   superkey :r awesome.restart
+   superkey :z awesome.restart
    {:description "reload awesome" :group :awesome})
 
   (awful.key
@@ -28,13 +28,7 @@
   (awful.key
    [modkey :Control] ","
    (fn [] (awful.client.focus.byidx -1))
-   {:description "focus next by index"
-    :group :client})
-
-  (awful.key
-   [modkey :Control] ","
-   (fn [] (awful.client.focus.byidx -1))
-   {:description "focus next by index"
+   {:description "focus prev by index"
     :group :client})
 
   (awful.key
@@ -78,11 +72,23 @@
    {:description "jump to Kitty"
     :group :launcher})
 
-  (awful.key [modkey] "l"
-             (fn []
-               (awful.tag.incmwfact 0.05)
-               )
-             {:description "increase master width factor" :group "layout"})))
+  (awful.key
+   [modkey :Control] "]"
+   (fn [] (awful.tag.incmwfact 0.01))
+   {:description "increase master width factor" :group "layout"})
+  (awful.key
+   [modkey :Control] "["
+   (fn [] (awful.tag.incmwfact -0.01))
+   {:description "decrease master width factor" :group "layout"})
+
+  (awful.key
+   superkey "r"
+   (fn []
+     (-?> (awful.screen.focused)
+          (. :my_promptbox)
+          (: :run)))
+   {:description "Run prompt"
+    :group :launcher})))
 
 (global
  client_keys

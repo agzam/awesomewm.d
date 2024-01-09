@@ -56,16 +56,33 @@
 
 (local hotkeys_popup (require :awful.hotkeys_popup))
 
+(fn quit []
+  (let [confirm-dlg (awful.menu {:items [[:cancel (fn [] nil)]
+                                         [:quit (fn [] (awesome.quit))]]})]
+    (: confirm-dlg :show)))
+
 (set my_awesome_menu [["hotkeys" (fn [] (hotkeys_popup.show_help nil (awful.screen.focused)))]
                       ["manual" (.. terminal " -e man awesome")]
                       ;; ["edit config" (.. editor_cmd " " awesome.conffile)]
                       ["restart" awesome.restart]
-                      ["quit" (fn [] (awesome.quit))]])
+                      ["run"
+                       (fn []
+                         (-?> (awful.screen.focused)
+                              (. :my_promptbox)
+                              (: :run)))]
+                      ["quit" quit]])
 
-(global my_main_menu (awful.menu {:items [["awesome" my_awesome_menu beautiful.awesome_icon]
-                                       ["open terminal" terminal]]}))
+(global my_main_menu (awful.menu {:items my_awesome_menu}))
+
+(local naughty (require :naughty))
+
+(global
+ lame_dbg
+ (fn [obj]
+   (naughty.notify {:title "debug"
+                    :text (gears.debug.dump_return obj)})))
 
 (require :theming)
-(require :keybindings)
 (require :rules)
 (require :screen)
+(require :keybindings)
