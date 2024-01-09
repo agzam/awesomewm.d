@@ -94,17 +94,38 @@
  client_keys
  (gears.table.join
   (awful.key
-   [modkey :Control] "Return"
+   [modkey :Control] :Return
    (fn [c] (: c :swap (awful.client.getmaster)))
    {:description "move to master"
     :group "client"})
 
   (awful.key
-   superkey "f"
+   superkey :f
    (fn [c]
      (set c.fullscreen (not c.fullscreen))
      (: c :raise))
    {:description "fullscreen"
+    :group "client"})
+  (awful.key
+   superkey :m
+   (fn [c]
+     (set c.maximized (not c.maximized))
+     (: c :raise))
+   {:description "maximize"
+    :group "client"})
+  (awful.key
+   superkey "\\"
+   (fn [c]
+     (set c.maximized_vertical (not c.maximized_vertical))
+     (: c :raise))
+   {:description "maximize vertically"
+    :group "client"})
+  (awful.key
+   superkey "-"
+   (fn [c]
+     (set c.maximized_horizontal (not c.maximized_horizontal))
+     (: c :raise))
+   {:description "maximize horizontally"
     :group "client"})))
 
 (root.keys global_keys)
