@@ -36,9 +36,12 @@
 (awful.screen.connect_for_each_screen
  (fn [scr]
    ;; Each screen has its own tag table.
-   (awful.tag
-    [:1 :2 :3 :4 :5 :6 :7 :8 :9]
-    scr (. awful.layout.layouts 1))
+   (let [def-layout (case scr.index
+                      1 (. awful.layout.layouts 1)
+                      2 (. awful.layout.layouts 2))]
+     (awful.tag
+      [:1 :2 :3 :4]
+      scr def-layout))
 
    ;; Create a promptbox for each screen
    (set scr.my_promptbox (awful.widget.prompt))
@@ -82,4 +85,16 @@
                [left]
                [scr.my_tasklist]
                [right])]
-    (: scr.my_wibox :setup args))))
+     (: scr.my_wibox :setup args))))
+
+(local naughty (require :naughty))
+
+(awful.screen.connect_for_each_screen
+ (fn [scr]
+   (case scr.index
+     1 (set scr.selected_tag.column_count 4)
+     2 (set scr.selected_tag.column_count 1))
+   
+   (naughty.notify {:title "scr.index"
+                    :text (gears.debug.dump_return
+                           scr.selected_tag.master_count)})))

@@ -14,4 +14,3 @@ table.insert(package.loaders or package.searchers, searcher)
 debug.traceback = fennel.traceback
 
 require("config")
-require("default_rc")

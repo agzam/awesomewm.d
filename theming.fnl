@@ -8,8 +8,9 @@
 
 (local {:apply_dpi dpi} (require "beautiful.xresources"))
 
-(set my_theme.useless_gap (dpi 3))
-(set my_theme.wallpaper "/usr/share/backgrounds/manjaro/ostpv1-l.png")
+(set my_theme.useless_gap (dpi 4))
+(set my_theme.border_width (dpi 1))
+(set my_theme.wallpaper "/usr/share/backgrounds/manjaro/ostpv3-l.png")
 
 (beautiful.init my_theme)
 
