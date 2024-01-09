@@ -4,6 +4,7 @@
 (local wibox (require :wibox))
 (local {:client_keys client_keys
         :client_buttons client_buttons} (require :keybindings))
+(local {:merge merge} (require :functional))
 
 (set awful.rules.rules
      [;; All clients will match this rule
@@ -70,32 +71,30 @@
                                          "request::activate"
                                          :titlebar
                                          {:raise true})))
-
                   (awful.button nil 3 (fn []
                                         (: c :emit_signal
                                          "request::activate"
                                          :titlebar
                                          {:raise true})
-                                        (awful.mouse.client.resize c))))]
-     (let [left {:1 (awful.titlebar.widget.iconwidget c)
-                 :buttons buttons
-                 :layout wibox.layout.fixed.horizontal}
-           middle {;; title
-                   :1 {:align :center
-                       :widget (awful.titlebar.widget.titlewidget c)}
-                   :buttons buttons
-                   :layout  wibox.layout.flex.horizontal}
-           right {:1 (awful.titlebar.widget.floatingbutton c)
-                  :2 (awful.titlebar.widget.maximizedbutton c)
-                  :3 (awful.titlebar.widget.stickybutton c)
-                  :4 (awful.titlebar.widget.ontopbutton c)
-                  :5 (awful.titlebar.widget.closebutton c)
-                  :layout (wibox.layout.fixed.horizontal)}
-           titlebar-args {:1 left
-                          :2 middle
-                          :3 right
-                          :layout wibox.layout.align.horizontal}]
-       (: (awful.titlebar c) :setup titlebar-args)))))
+                                        (awful.mouse.client.resize c))))
+         left (merge [(awful.titlebar.widget.iconwidget c)]
+                     {:buttons buttons
+                      :layout wibox.layout.fixed.horizontal})
+         middle (merge [{:align :center
+                         :widget (merge (awful.titlebar.widget.titlewidget c)
+                                        {:font "hermit 7"})}]
+                       {:buttons buttons
+                        :layout wibox.layout.flex.horizontal})
+         right (merge
+                [(awful.titlebar.widget.floatingbutton c)
+                 (awful.titlebar.widget.stickybutton c)
+                 (awful.titlebar.widget.ontopbutton c)
+                 (awful.titlebar.widget.maximizedbutton c)
+                 (awful.titlebar.widget.closebutton c)]
+                {:layout (wibox.layout.fixed.horizontal)})
+         titlebar-args (merge [left middle right]
+                              {:layout wibox.layout.align.horizontal})]
+     (: (awful.titlebar c {:size 24}) :setup titlebar-args))))
 
 ;; Enable sloppy focus, so that focus follows mouse.
 (client.connect_signal

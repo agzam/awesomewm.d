@@ -1,6 +1,7 @@
 (local awful (require :awful))
 (local gears (require :gears))
-(local hotkeys_popup (require "awful.hotkeys_popup"))
+(local hotkeys_popup (require :awful.hotkeys_popup))
+(local menubar (require :menubar))
 (local {:filter filter
         :map map
         :count count} (require :functional))
@@ -101,13 +102,11 @@
    {:description "decrease master width factor" :group "layout"})
 
   (awful.key
-   superkey "r"
-   (fn []
-     (-?> (awful.screen.focused)
-          (. :my_promptbox)
-          (: :run)))
-   {:description "Run prompt"
-    :group :launcher})))
+   superkey "r" (fn [] (-?> (awful.screen.focused) (. :my_promptbox) (: :run)))
+   {:description "Run prompt" :group :launcher})
+  (awful.key
+   superkey "l" (fn [] (menubar.show))
+   {:description "Show the menubar" :group :launcher})))
 
 (local
  client_keys
@@ -115,37 +114,35 @@
   (awful.key
    [modkey :Control] :Return
    (fn [c] (: c :swap (awful.client.getmaster)))
-   {:description "move to master"
-    :group "client"})
-
+   {:description "move to master" :group "client"})
+  (awful.key
+   superkey :o
+   (fn [c] (: c :move_to_screen))
+   {:description "move to screen" :group "client"})
   (awful.key
    superkey :f
    (fn [c]
      (set c.fullscreen (not c.fullscreen))
      (: c :raise))
-   {:description "fullscreen"
-    :group "client"})
+   {:description "fullscreen" :group "client"})
   (awful.key
    superkey :m
    (fn [c]
      (set c.maximized (not c.maximized))
      (: c :raise))
-   {:description "maximize"
-    :group "client"})
+   {:description "maximize" :group "client"})
   (awful.key
    superkey "\\"
    (fn [c]
      (set c.maximized_vertical (not c.maximized_vertical))
      (: c :raise))
-   {:description "maximize vertically"
-    :group "client"})
+   {:description "maximize vertically" :group "client"})
   (awful.key
    superkey "-"
    (fn [c]
      (set c.maximized_horizontal (not c.maximized_horizontal))
      (: c :raise))
-   {:description "maximize horizontally"
-    :group "client"})))
+   {:description "maximize horizontally" :group "client"})))
 
 (root.keys global_keys)
 

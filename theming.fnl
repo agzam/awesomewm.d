@@ -1,19 +1,17 @@
 (local gears (require :gears))
 (local beautiful (require :beautiful))
 (local awful (require :awful))
-
-(local
- my_theme
- ((loadfile (.. (gears.filesystem.get_themes_dir) "zenburn/theme.lua"))))
+(local {:merge merge} (require :functional))
 
 (local {:apply_dpi dpi} (require "beautiful.xresources"))
 
-(set my_theme.useless_gap (dpi 4))
-(set my_theme.border_width (dpi 1))
-(set my_theme.border_focus "#fcba03")
-(set my_theme.wallpaper "/usr/share/backgrounds/manjaro/ostpv3-l.png")
-
-(beautiful.init my_theme)
+(let [theme (-> ((loadfile (.. (gears.filesystem.get_themes_dir) "zenburn/theme.lua")))
+                (merge {:font "hermit 8"
+                        :useless_gap (dpi 4)
+                        :border_width (dpi 1)
+                        :border_focus "#fcba03"
+                        :wallpaper "/usr/share/backgrounds/manjaro/ostpv3-l.png"}))]
+  (beautiful.init theme))
 
 (fn set_wallpaper [s]
   (when beautiful.wallpaper
