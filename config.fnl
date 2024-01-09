@@ -37,7 +37,6 @@
        (set in_error? false)))))
 
 (local wibox (require :wibox))
-(global my_text_clock (wibox.widget.textclock))
 
 (local cfg-dir  (.. (os.getenv "HOME") "/.config/awesome/"))
 (os.execute "xset r rate 180 100")
@@ -83,6 +82,6 @@
                     :text (gears.debug.dump_return obj)})))
 
 (require :theming)
-(require :rules)
 (require :screen)
 (require :keybindings)
+(require :rules)

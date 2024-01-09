@@ -2,6 +2,7 @@
 (local awful (require :awful))
 (local wibox (require :wibox))
 (local beautiful (require :beautiful))
+(local {:my_keyboard_layout my_keyboard_layout} (require :keybindings))
 
 ;; Create a wibox for each screen and add it
 (local
@@ -32,6 +33,8 @@
 
 (local my_launcher (awful.widget.launcher {:image beautiful.awesome_icon
                                            :menu my_main_menu}))
+
+(local my_text_clock (wibox.widget.textclock))
 
 (awful.screen.connect_for_each_screen
  (fn [scr]

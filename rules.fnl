@@ -2,6 +2,8 @@
 (local awful (require :awful))
 (local gears (require :gears))
 (local wibox (require :wibox))
+(local {:client_keys client_keys
+        :client_buttons client_buttons} (require :keybindings))
 
 (set awful.rules.rules
      [;; All clients will match this rule

@@ -7,9 +7,9 @@
 (global superkey [modkey :Control :Mod1 :Shift])
 
 ;; Keyboard map indicator and switcher
-(global my_keyboard_layout (awful.widget.keyboardlayout))
+(local my_keyboard_layout (awful.widget.keyboardlayout))
 
-(global
+(local
  global_keys
  (gears.table.join
   (awful.key
@@ -90,13 +90,21 @@
    {:description "Run prompt"
     :group :launcher})))
 
-(global
+(local
  client_keys
  (gears.table.join
   (awful.key
    [modkey :Control] "Return"
    (fn [c] (: c :swap (awful.client.getmaster)))
    {:description "move to master"
+    :group "client"})
+
+  (awful.key
+   superkey "f"
+   (fn [c]
+     (set c.fullscreen (not c.fullscreen))
+     (: c :raise))
+   {:description "fullscreen"
     :group "client"})))
 
 (root.keys global_keys)
@@ -110,7 +118,7 @@
   (awful.button [] 5 awful.tag.viewprev)))
 
 
-(global
+(local
  client_buttons
  (gears.table.join
   (awful.button
@@ -123,3 +131,8 @@
    [modkey] 3 (fn [c]
                 (c:emit_signal "request::activate" :mouse_click {:raise true})
                 (awful.mouse.client.resize c)))))
+
+{:client_keys client_keys
+ :global_keys global_keys
+ :my_keyboard_layout my_keyboard_layout
+ :client_buttons client_buttons}
