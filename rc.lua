@@ -1,6 +1,6 @@
-fennel = require("fennel")
+fennel = require("lib/fennel")
 cfgDir = os.getenv("HOME") .. "/.config/awesome/"
-fennel.path = fennel.path .. ";" .. cfgDir .. "?.fnl;" .. cfgDir .. "?/init.fnl"
+fennel.path = fennel.path .. ";" .. cfgDir .. "/src/" .. "?.fnl;" .. cfgDir .. "/lib/?.fnl;"
 
 searcher = fennel.makeSearcher({
     correlate = true,
@@ -13,4 +13,4 @@ searcher = fennel.makeSearcher({
 table.insert(package.loaders or package.searchers, searcher)
 debug.traceback = fennel.traceback
 
-require("config")
+require("init")

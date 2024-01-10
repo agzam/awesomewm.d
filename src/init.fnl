@@ -32,7 +32,7 @@
 
 (local cfg-dir (.. (os.getenv :HOME) :/.config/awesome/))
 (os.execute "xset r rate 180 100")
-(os.execute (.. cfg-dir :xrandr-settings.sh))
+(os.execute (.. cfg-dir "scripts/xrandr-settings.sh"))
 
 (set awful.layout.layouts
      [awful.layout.suit.tile

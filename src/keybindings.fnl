@@ -2,18 +2,12 @@
 (local gears (require :gears))
 (local hotkeys_popup (require :awful.hotkeys_popup))
 (local menubar (require :menubar))
+(local {: modkey : superkey} (require :core))
 (local {: my_main_menu} (require :menu))
 (local {: filter : count} (require :functional))
 
-;; (require "awful.hotkeys_popup.keys")
-
-(local modkey :Mod4)
-(local superkey [modkey :Control :Mod1 :Shift])
-
 ;; Keyboard map indicator and switcher
 (local my_keyboard_layout (awful.widget.keyboardlayout))
-
-
 
 (fn focus_by_idx [idx c]
   "focus.byidx version that works for all screens"
@@ -31,7 +25,7 @@
       (: client.focus :raise)
       (set client.focus.marked true))))
 
-(local window_switcher (require :window_switcher))
+(local window_switcher (require :lib.window_switcher))
 (window_switcher.enable
  {:type :thumbnail ; set to anything other than "thumbnail" to disable client previews
   :hide_window_switcher_key :Escape
@@ -76,16 +70,16 @@
    [modkey] "."
    (fn [c]
      (awful.client.focus.byidx 1)
-     (when client.focus
-       (awful.client.setmaster client.focus)))
+     (when c.focus
+       (awful.client.setmaster c.focus)))
    {:description "next to master"
     :group :client})
   (awful.key
    [modkey] ","
    (fn [c]
      (awful.client.focus.history.previous)
-     (when client.focus
-       (awful.client.setmaster client.focus)))
+     (when c.focus
+       (awful.client.setmaster c.focus)))
    {:description "prev to master"
     :group :client})
   (awful.key

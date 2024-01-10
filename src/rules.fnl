@@ -108,3 +108,6 @@
 (client.connect_signal
  :unfocus
  (fn [c] (set c.border_color beautiful.border_normal)))
+
+
+(require :browser)
