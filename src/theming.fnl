@@ -1,7 +1,7 @@
 (local gears (require :gears))
 (local beautiful (require :beautiful))
 (local awful (require :awful))
-(local {:merge merge} (require :functional))
+(local {: merge} (require :functional))
 
 (local {:apply_dpi dpi} (require "beautiful.xresources"))
 

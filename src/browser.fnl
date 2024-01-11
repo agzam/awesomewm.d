@@ -1,28 +1,15 @@
 (local awful (require :awful))
 (local gears (require :gears))
-(local {: merge} (require :functional))
-
+(local {: merge : seq?} (require :functional))
+(local {: simulate_key} (require :keybindings))
 (local {: modkey} (require :core))
 
-;; (local
-;;  browser-keys
-;;  (awful.key
-;;   [:Control] "n"
-;;   (fn []
+(local
+ browser_keys
+ (gears.table.join
+  {:app_local_class :Brave-browser}
+  (simulate_key [:Control] :n [] :Down)
+  (simulate_key [:Control] :p [] :Up)
+  (simulate_key [:Mod4] :l [:Control] :l)))
 
-;;     )
-;;   {:description "window switcher"
-;;    :group :client})
-
-;;  )
-;;
-
-(client.connect_signal
- :focus
- (fn [c]
-   (when (= c.class :Brave-browser)
-     (let [keys (merge (c.keys c)
-                       (awful.key [:Control] :n
-                                  (fn [c]
-                                    (lame_dbg "dude, it worked"))))]
-       (c.keys c keys)))))
+{ : browser_keys }

@@ -52,8 +52,9 @@
 ;; Reduce Primitives
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(fn seq? [tbl]
-  (not= (. tbl 1) nil))
+(fn seq?
+  [tbl]
+  (~= (. tbl 1) nil))
 
 (fn seq [tbl]
   (if (seq? tbl)

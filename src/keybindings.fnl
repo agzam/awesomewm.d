@@ -4,10 +4,22 @@
 (local menubar (require :menubar))
 (local {: modkey : superkey} (require :core))
 (local {: my_main_menu} (require :menu))
-(local {: filter : count} (require :functional))
+(local {: filter : count : merge : seq?} (require :functional))
 
 ;; Keyboard map indicator and switcher
 (local my_keyboard_layout (awful.widget.keyboardlayout))
+
+(fn simulate_key
+  [src-mods src-key dest-mods dest-key]
+  "Registers a key that listens for source key (with modifiers) and emits target keypress."
+  (awful.key
+   src-mods src-key
+   (fn []
+     (_G.root.fake_input :key_release src-key)
+     (when (seq? src-mods)
+       (each [_ mkey (ipairs src-mods)]
+         (_G.root.fake_input :key_release mkey)))
+     (awful.key.execute dest-mods dest-key))))
 
 (fn focus_by_idx [idx c]
   "focus.byidx version that works for all screens"
@@ -205,7 +217,8 @@
                     {:raise true})
      (awful.mouse.client.resize c)))))
 
-{: modkey
+{: simulate_key
+ : modkey
  : superkey
  : client_keys
  : global_keys

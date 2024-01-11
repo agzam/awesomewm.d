@@ -47,7 +47,7 @@
 
 
 ;; Signal function to execute when a new client appears.
-(client.connect_signal
+(_G.client.connect_signal
  :manage
  (fn [c]
    ;; Set the windows at the slave,
@@ -60,7 +60,7 @@
      (awful.placement.no_offscreen c))))
 
 ;; Add a titlebar if titlebars_enabled is set to true in the rules.
-(client.connect_signal
+(_G.client.connect_signal
  "request::titlebars"
  (fn [c]
    ;; buttons for the titlebar
@@ -96,18 +96,29 @@
      (: (awful.titlebar c {:size 24}) :setup titlebar-args))))
 
 ;; Enable sloppy focus, so that focus follows mouse.
-(client.connect_signal
+(_G.client.connect_signal
  "mouse::enter"
  (fn [c]
    (c:emit_signal
     "request::activate"
     :mouse_enter {:raise false})))
-(client.connect_signal
+(_G.client.connect_signal
  :focus
  (fn [c] (set c.border_color beautiful.border_focus)))
-(client.connect_signal
+(_G.client.connect_signal
  :unfocus
  (fn [c] (set c.border_color beautiful.border_normal)))
 
+(local {: browser_keys} (require :browser))
 
-(require :browser)
+(local
+ app_local_keys
+ [browser_keys])
+
+(_G.client.connect_signal
+ :manage
+ (fn [c]
+   (each [_ ks (pairs app_local_keys)]
+     (when (= c.class ks.app_local_class)
+       (let [keys (merge (c.keys c) ks)]
+         (c.keys c keys))))))
