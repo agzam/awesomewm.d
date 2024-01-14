@@ -6,11 +6,11 @@
 (local {:apply_dpi dpi} (require "beautiful.xresources"))
 
 (let [theme (-> ((loadfile (.. (gears.filesystem.get_themes_dir) "zenburn/theme.lua")))
-                (merge {:font "hermit 8"
-                        :useless_gap (dpi 4)
-                        :border_width (dpi 1)
-                        :border_focus "#fcba03"
-                        :wallpaper "/usr/share/backgrounds/manjaro/ostpv3-l.png"}))]
+             (merge {:font "hermit 8"
+                     :useless_gap (dpi 4)
+                     :border_width (dpi 1)
+                     :border_focus "#fcba03"
+                     :wallpaper "/usr/share/backgrounds/manjaro/ostpv3-l.png"}))]
   (beautiful.init theme))
 
 (fn set_wallpaper [s]

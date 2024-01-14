@@ -21,9 +21,9 @@
          (_G.root.fake_input :key_release mkey)))
      (awful.key.execute dest-mods dest-key))))
 
-(fn focus_by_idx [idx c]
+(fn focus_by_idx [idx _c]
   "focus.byidx version that works for all screens"
-  (set client.focus.marked true)
+  (set _G.client.focus.marked true)
   (let [clients (-?> (awful.screen.focused)
                      (: :get_clients true))
         marked-ct (->> clients
@@ -33,9 +33,9 @@
       (awful.screen.focus_relative -1)
       (awful.client.getmarked))
     (awful.client.focus.byidx idx)
-    (when client.focus
-      (: client.focus :raise)
-      (set client.focus.marked true))))
+    (when _G.client.focus
+      (_G.client.focus:raise)
+      (set _G.client.focus.marked true))))
 
 (local window_switcher (require :lib.window_switcher))
 (window_switcher.enable
@@ -59,13 +59,13 @@
    superkey :s hotkeys_popup.show_help
    {:description "this help" :group :awesome})
   (awful.key
-   superkey :z awesome.restart
+   superkey :z _G.awesome.restart
    {:description "reload awesome"
     :group :awesome})
   (awful.key
    [modkey] "."
    (fn []
-     (awesome.emit_signal "bling::window_switcher::turn_on"))
+     (_G.awesome.emit_signal "bling::window_switcher::turn_on"))
    {:description "window switcher"
     :group :client})
   (awful.key

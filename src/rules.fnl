@@ -30,7 +30,8 @@
                           :Sxiv
                           :Wpa_gui
                           :veromix
-                          :xtightvncviewer]
+                          :xtightvncviewer
+                          :vlc]
                   ;; Note that the name property shown in xprop might be set slightly after creation of the client
                   ;; and the name shown there might not match defined rules here.
                   :name ["Event Tester"  ; xev.
@@ -88,6 +89,7 @@
                 [(awful.titlebar.widget.floatingbutton c)
                  (awful.titlebar.widget.stickybutton c)
                  (awful.titlebar.widget.ontopbutton c)
+                 (awful.titlebar.widget.minimizebutton c)
                  (awful.titlebar.widget.maximizedbutton c)
                  (awful.titlebar.widget.closebutton c)]
                 {:layout (wibox.layout.fixed.horizontal)})
