@@ -2,7 +2,23 @@
 (local gears (require :gears))
 (local awful (require :awful))
 (require :awful.autofocus)
-(local {: filter : first } (require :functional))
+(global {
+         : apply
+         : concat
+         : count
+         : drop
+         : drop-while
+         : filter
+         : first
+         : identity
+         : last
+         : map
+         : mapcat
+         : merge
+         : remove
+         : seq?
+         : take-while
+         } (require :fun))
 
 ;; Notification library
 (local naughty (require :naughty))
@@ -31,10 +47,12 @@
                       :text (tostring err)})
      (set in_error? false))))
 
+(awful.spawn.with_shell (.. "source " (os.getenv "HOME") "/.xprofile &"))
 
-(awful.spawn.once "emacs" {:tag (-> _G.screen (. 1) (. :tags) (. 1))
+(awful.spawn.once "emacs" {:tag (-?> _G.screen (. 1) (. :tags) (. 1))
                            :instance :emacs
-                           :screen "DP-4"})
+                           :screen "DP-4"}
+                  (fn [c] (= c.class :Emacs)))
 
 ;; spawn.once doesn't work for Brave and that makes you do some stupid shit like this. I have to manually check if it's
 ;; running and then start it, then finally move it to the screen I want it to be
@@ -59,7 +77,13 @@
  (fn [obj]
    (naughty.notify
     {:title :debug
-     :text (gears.debug.dump_return obj)})))
+     :text (gears.debug.dump_return obj)
+     :run (fn [noti-obj]
+            "Wheh clicked, copy notification text to clipboard"
+            (let [txt (-?> noti-obj (. :textbox) (. :text))]
+              (awful.spawn.with_shell
+               (.. "echo '" txt "' | xclip -selection clipboard")))
+            (noti-obj.die naughty.notificationClosedReason.dismissedByUser))})))
 
 (require :theming)
 (require :screen)

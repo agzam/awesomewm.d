@@ -1,6 +1,6 @@
 (local awful (require :awful))
 (local gears (require :gears))
-(local {: merge : seq?} (require :functional))
+(local {: merge : seq?} (require :fun))
 (local {: simulate_key} (require :keybindings))
 (local {: modkey} (require :core))
 

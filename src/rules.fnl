@@ -4,7 +4,7 @@
 (local wibox (require :wibox))
 (local {:client_keys client_keys
         :client_buttons client_buttons} (require :keybindings))
-(local {:merge merge} (require :functional))
+(local {:merge merge} (require :fun))
 
 (set awful.rules.rules
      [;; All clients will match this rule
