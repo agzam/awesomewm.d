@@ -1,0 +1,8 @@
+{
+    "fennel-ls": {
+        "checks": {
+            "unused-definition": true,
+            "unknown-module-field": true
+        },
+        "extra-globals": "awesome root client screen lame_dbg selection apply complement compose concat conj count drop drop-while empty? filter first get get-in has-some? identity join last map mapcat merge noop range reduce remove seq seq? some take-while"}
+}

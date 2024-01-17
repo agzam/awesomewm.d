@@ -1,24 +1,35 @@
-;; Standard awesome library
 (local gears (require :gears))
 (local awful (require :awful))
 (require :awful.autofocus)
-(global {
-         : apply
+(global {: apply
+         : complement
+         : compose
          : concat
+         : conj
          : count
          : drop
          : drop-while
+         : empty?
          : filter
          : first
+         : get
+         : get-in
+         : has-some?
          : identity
+         : join
          : last
          : map
          : mapcat
          : merge
+         : noop
+         : range
+         : reduce
          : remove
+         : seq
          : seq?
-         : take-while
-         } (require :fun))
+         : some
+         : take-while} (require :fun))
+
 
 ;; Notification library
 (local naughty (require :naughty))
@@ -29,14 +40,14 @@
 
 ;; Check if awesome encountered an error during startup and fell back to
 ;; another config (This code will only ever execute for the fallback config)
-(when _G.awesome.startup_errors
+(when awesome.startup_errors
   (naughty.notify {:preset naughty.config.presets.critical
                    :title "Oops, there were errors during startup!"
-                   :text _G.awesome.startup_errors}))
+                   :text awesome.startup_errors}))
 
 ;; Handle runtime errors after startup
 (var in_error? false)
-(_G.awesome.connect_signal
+(awesome.connect_signal
  "debug::error"
  (fn [err]
    ;; Make sure we don't go into an endless error loop
@@ -49,7 +60,7 @@
 
 (awful.spawn.with_shell (.. "source " (os.getenv "HOME") "/.xprofile &"))
 
-(awful.spawn.once "emacs" {:tag (-?> _G.screen (. 1) (. :tags) (. 1))
+(awful.spawn.once "emacs" {:tag (-?> screen (. 1) (. :tags) (. 1))
                            :instance :emacs
                            :screen "DP-4"}
                   (fn [c] (= c.class :Emacs)))
@@ -62,7 +73,7 @@
    (when (= exit-code 1)
      (awful.spawn.with_line_callback
       "brave"
-      {:stdout (fn [] (let [clnt (-?>> (_G.client.get) (filter (fn [c] (= c.class :Brave-browser))) first)]
+      {:stdout (fn [] (let [clnt (-?>> (client.get) (filter (fn [c] (= c.class :Brave-browser))) first)]
                         (when clnt (clnt:move_to_screen "DP-4"))))}))))
 
 (set awful.layout.layouts

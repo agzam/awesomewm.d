@@ -10,6 +10,8 @@
   {:app_local_class :Brave-browser}
   (simulate_key [:Control] :n [] :Down)
   (simulate_key [:Control] :p [] :Up)
-  (simulate_key [:Mod4] :l [:Control] :l)))
+  (simulate_key [modkey] :l [:Control] :l)
+  (simulate_key [modkey] :j [:Control :Shift] :Tab)
+  (simulate_key [modkey] :k [:Control] :Tab)))
 
 { : browser_keys }

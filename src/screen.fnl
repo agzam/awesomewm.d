@@ -11,10 +11,10 @@
  (gears.table.join
   (awful.button nil 1 (fn [tag] (tag:view_only)))
   (awful.button [modkey] 1 (fn [tag] (when client.focus
-                                       (_G.client.focus:move_to_tag tag))))
+                                       (client.focus:move_to_tag tag))))
   (awful.button nil 3 awful.tag.viewtoggle)
   (awful.button [modkey] 3 (fn [tag] (when client.focus
-                                       (_G.client.focus:toggle_tag tag))))
+                                       (client.focus:toggle_tag tag))))
   (awful.button nil 4 (fn [tag] (awful.tag.viewnext tag.screen)))
   (awful.button nil 5 (fn [tag] (awful.tag.viewprev tag.screen)))))
 
@@ -22,7 +22,7 @@
  tasklist_buttons
  (gears.table.join
   (awful.button nil 1 (fn [c]
-                        (if (= c _G.client.focus)
+                        (if (= c client.focus)
                             (set c.minimized true)
                             (c:emit_signal
                              "request::activate"
@@ -37,12 +37,12 @@
 
 (local my_text_clock (wibox.widget.textclock))
 
-(_G.awesome.connect_signal
+(awesome.connect_signal
  :startup
  (fn []
    (awful.screen.connect_for_each_screen
     (fn [scr]
-      (if (and (= 2 (_G.screen:instances))
+      (if (and (= 2 (screen:instances))
                (-> scr.geometry.x (= 0)))
           (do
             (awful.tag [:1] scr awful.layout.suit.fair.horizontal)

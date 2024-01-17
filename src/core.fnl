@@ -2,7 +2,7 @@
 (local superkey [modkey :Control :Mod1 :Shift])
 
 (fn all-screens []
-  (icollect [_ s (ipairs _G.screen)] s))
+  (icollect [_ s (ipairs screen)] s))
 
 (fn all-clients []
   (let [stacked true]
