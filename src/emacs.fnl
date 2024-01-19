@@ -20,7 +20,8 @@
      cb)))
 
 (fn edit-with-emacs []
-  (when client.focus
+  (when (and client.focus
+             (not= client.focus.class :Emacs))
     (copy-to-clipboard
      (fn []
        (let [cmd (string.format

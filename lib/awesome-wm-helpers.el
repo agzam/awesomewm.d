@@ -91,14 +91,15 @@ TITLE - title of the window."
     (run-with-timer
      0.1 nil
      (lambda ()
-      (with-current-buffer buffer
-        (put 'awesome--caller-pid 'permanent-local t)
-        (setq-local awesome--caller-pid pid)
-        (clipboard-yank)
-        (deactivate-mark)
-        (awesome-edit-with-emacs-mode +1))
-      (pop-to-buffer buffer)
-      (run-hook-with-args 'awesome-edit-with-emacs-hook buf-name pid title)))))
+       (with-current-buffer buffer
+         (put 'awesome--caller-pid 'permanent-local t)
+         (setq-local awesome--caller-pid pid)
+         (markdown-mode)
+         (clipboard-yank)
+         (deactivate-mark)
+         (awesome-edit-with-emacs-mode +1))
+       (pop-to-buffer buffer)
+       (run-hook-with-args 'awesome-edit-with-emacs-hook buf-name pid title)))))
 
 (defun awesome-finish-edit-with-emacs ()
   "Invoke this command when done editing."
@@ -139,6 +140,15 @@ TITLE - title of the window."
        (buffer-name (current-buffer)) pid)
       (kill-buffer-and-window)
       (awesome-switch-to-app pid))))
+
+(add-to-list
+ 'display-buffer-alist
+ '("\\* awesome-edit.*"
+   (display-buffer-reuse-window
+    display-buffer-in-direction)
+   (direction . right)
+   (window . root)
+   (window-width . 0.30)))
 
 (provide 'awesome-wm-helpers)
 

@@ -127,7 +127,9 @@
   (map-key superkey :l (fn []
                          (menubar.refresh)
                          (menubar.show))
-           "show the menubar" :launcher)))
+           "show the menubar" :launcher)
+  (map-key [modkey :Control] "o" edit-with-emacs
+           "edit with Emacs" :client)))
 
 (local
  client_keys
@@ -165,9 +167,7 @@
              (set c.maximized_horizontal
                   (not c.maximized_horizontal))
              (c:raise))
-           "maximize horizontally" :client)
-  (map-key [modkey :Control] "o" edit-with-emacs
-           "edit with Emacs" :client)))
+           "maximize horizontally" :client)))
 
 (root.keys global_keys)
 

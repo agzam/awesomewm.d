@@ -111,11 +111,11 @@
  :unfocus
  (fn [c] (set c.border_color beautiful.border_normal)))
 
-(local {: browser_keys} (require :browser))
+(local browser (require :browser))
 
 (local
  app_local_keys
- [browser_keys])
+ [browser.browser-local-keys])
 
 (client.connect_signal
  :manage
