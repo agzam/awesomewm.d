@@ -20,7 +20,10 @@
       (pairs tbl)))
 
 (fn empty?
-  [coll] (not (seq coll)))
+  [coll]
+  (match (type coll)
+    :string (= coll "")
+    :table (not (seq? coll))))
 
 (fn apply [f ...]
   (let [args [...]]
@@ -166,6 +169,7 @@
  : concat
  : conj
  : count
+ : dec
  : drop
  : drop-while
  : empty?
@@ -175,6 +179,7 @@
  : get-in
  : has-some?
  : identity
+ : inc
  : join
  : last
  : map

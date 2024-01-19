@@ -1,6 +1,6 @@
 (local gears (require :gears))
 (local awful (require :awful))
-(require :awful.autofocus)
+(local naughty (require :naughty))
 (global {: apply
          : complement
          : compose
@@ -29,10 +29,7 @@
          : seq?
          : some
          : take-while} (require :fun))
-
-
-;; Notification library
-(local naughty (require :naughty))
+(global { : lame_dbg } (require :core))
 
 ;;;;;;;;;;;;;;;;;;;;
 ;; Error handling ;;
@@ -58,6 +55,8 @@
                       :text (tostring err)})
      (set in_error? false))))
 
+
+
 (awful.spawn.with_shell (.. "source " (os.getenv "HOME") "/.xprofile &"))
 
 (awful.spawn.once "emacs" {:tag (-?> screen (. 1) (. :tags) (. 1))
@@ -82,19 +81,6 @@
       awful.layout.suit.floating
       awful.layout.suit.max
       awful.layout.suit.max.fullscreen])
-
-(global
- lame_dbg
- (fn [obj]
-   (naughty.notify
-    {:title :debug
-     :text (gears.debug.dump_return obj)
-     :run (fn [noti-obj]
-            "Wheh clicked, copy notification text to clipboard"
-            (let [txt (-?> noti-obj (. :textbox) (. :text))]
-              (awful.spawn.with_shell
-               (.. "echo '" txt "' | xclip -selection clipboard")))
-            (noti-obj.die naughty.notificationClosedReason.dismissedByUser))})))
 
 (require :theming)
 (require :screen)
