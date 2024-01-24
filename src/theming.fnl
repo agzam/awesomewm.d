@@ -7,10 +7,15 @@
 
 (let [theme (-> ((loadfile (.. (gears.filesystem.get_themes_dir) "zenburn/theme.lua")))
              (merge {:font "hermit 8"
-                     :useless_gap (dpi 4)
+                     :useless_gap (dpi 6)
                      :border_width (dpi 3)
                      :border_focus "#fcba03"
-                     :wallpaper "/usr/share/backgrounds/manjaro/ostpv3-l.png"}))]
+                     :bg_normal "#000"
+                     :wallpaper (fn [s]
+                                  (let [wps ["wallpaper_wide.png"
+                                             "wallpaper_portrait.png"]]
+                                    (-?>> (. wps s.index)
+                                         (.. "/home/ag/Pictures/"))))}))]
   (beautiful.init theme))
 
 (fn set_wallpaper [s]
@@ -19,7 +24,7 @@
           wallpaper (if (= (type wp) "function")
                         (wp s)
                         wp)]
-      (gears.wallpaper.maximized wallpaper s false))))
+      (gears.wallpaper.fit wallpaper s false))))
 
 ;; Re-set wallpaper when a screen's geometry changes (e.g. different resolution)
 (screen.connect_signal "property::geometry" set_wallpaper)
