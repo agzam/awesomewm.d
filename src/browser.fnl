@@ -12,6 +12,12 @@
   (simulate-key [modkey] :j [:Control :Shift] :Tab)
   (simulate-key [modkey] :k [:Control] :Tab)
   (simulate-key [:Control] :j [] :Down)
-  (simulate-key [:Control] :k [] :Up)))
+  (simulate-key [:Control] :k [] :Up)
+  (simulate-key [modkey] :t [:Control] :t)
+  (simulate-key [modkey] :w [:Control] :w)
+  (simulate-key [:Mod1] :BackSpace [:Control] :BackSpace)
+  (->> (range 1 9)
+       (map #(let [k (tostring $1)] (simulate-key [modkey] k [:Control] k)))
+       (flatten))))
 
 { : browser-local-keys }

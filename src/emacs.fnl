@@ -4,10 +4,10 @@
          : all-clients} (require :core))
 
 (fn init []
-  (awful.spawn.with_shell
-   (string.format
-    "emacsclient -e '(load-file \"%s\")'"
-    (.. cfg_dir "lib/awesome-wm-helpers.el"))))
+  (let [cmd (string.format
+             "emacsclient -e '(load-file \"%s\")'"
+             (.. cfg_dir "lib/awesome-wm-helpers.el"))]
+    (awful.spawn.with_shell cmd)))
 
 (fn copy-to-clipboard [cb]
   (let [clb (shellout "xsel -ob")
@@ -20,6 +20,7 @@
      cb)))
 
 (fn edit-with-emacs []
+  (init)
   (when (and client.focus
              (not= client.focus.class :Emacs))
     (copy-to-clipboard

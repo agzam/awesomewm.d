@@ -2,3 +2,12 @@
 #+begin_src sh :results verbatim
 git clone git@github.com:agzam/awesomewm.d.git ~/.config/awesome/
 #+end_src
+
+** Prerequisites
+#+begin_src bash
+yay -S lua53 luarocks
+
+luarocks install --lua-version 5.3 --local jeejah
+luarocks install --lua-version 5.3 --local fennel
+#+end_src
+

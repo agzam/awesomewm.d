@@ -4,5 +4,5 @@
             "unused-definition": true,
             "unknown-module-field": true
         },
-        "extra-globals": "cfg_dir awesome root client screen lame_dbg selection apply complement compose concat conj count drop drop-while empty? filter first get get-in has-some? identity join last map mapcat merge noop range reduce remove seq seq? some take-while"}
+        "extra-globals": "cfg_dir awesome root client screen lame_dbg selection apply complement compose concat conj count drop drop-while empty? filter first flatten get get-in has-some? identity join last map mapcat merge noop range reduce remove seq seq? some take-while"}
 }

@@ -1,7 +1,8 @@
 (local gears (require :gears))
 (local awful (require :awful))
 (local naughty (require :naughty))
-(global {: apply
+(global {
+         : apply
          : complement
          : compose
          : concat
@@ -12,6 +13,7 @@
          : empty?
          : filter
          : first
+         : flatten
          : get
          : get-in
          : has-some?
@@ -28,7 +30,8 @@
          : seq
          : seq?
          : some
-         : take-while} (require :fun))
+         : take-while
+         } (require :fun))
 (global { : lame_dbg } (require :core))
 
 ;;;;;;;;;;;;;;;;;;;;

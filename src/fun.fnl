@@ -175,6 +175,7 @@
  : empty?
  : filter
  : first
+ : flatten
  : get
  : get-in
  : has-some?

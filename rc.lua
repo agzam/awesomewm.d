@@ -1,14 +1,24 @@
 home = os.getenv("HOME")
 cfg_dir = home .. "/.config/awesome/"
 
+package.cpath =
+  package.cpath .. ";"
+  .. home .. "/.luarocks/lib/lua/5.3/?.so;"
+  .. home .. "/.luarocks/lib/lua/5.3/?/?.so"
+
 package.path =
-  package.path .. ";" .. home .. "/.luarocks/share/lua/5.4/?.lua;"
--- package.cpath = package.cpath .. ";" .. home .. "/.luarocks/lib/lua/5.4/?.so"
+  package.path .. ";"
+  .. home .. "/.luarocks/share/lua/5.3/?.lua;"
+  .. home .. "/.luarocks/share/lua/5.3/?/?.lua;"
+  .. cfg_dir .. "lib/?/?.lua;"
+  .. cfg_dir .. "lib/?.lua"
+
 
 fennel = require("fennel")
 
 -- fennel.path = package.path .. ";" .. cfg_dir .. "src/?.lua;" .. cfg_dir .. "lib/?.lua;"
 fennel.path = fennel.path .. ";"
+  .. package.path .. ";"
   .. cfg_dir .. "src/?.fnl;"
   .. cfg_dir .. "lib/?.fnl;"
 
@@ -25,6 +35,6 @@ fennel["macro-path"] = cfg_dir .. "src/?.fnl;";
 -- })
 
 table.insert(package.loaders or package.searchers, fennel.searcher)
--- debug.traceback = fennel.traceback
+debug.traceback = fennel.traceback
 
 require("_init")
