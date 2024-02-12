@@ -65,11 +65,10 @@ Hook function must accept arguments:
 - `pid'         - PID of the app that invoked Edit-with-Emacs")
 
 (defvar awesome--caller-pid nil
-  "Buffer local var to store the process id of the app that invoked
-the edit buffer")
+  "Buffer local var to store the pid of the app that invoked the edit buffer.")
 
 (defun awesome--find-buffer-by-name-prefix (prefix)
-  "Find the first buffer with a name that starts with PREFIX."
+  "Find the first buffer with a name that has PREFIX."
   (let ((buffer-list (buffer-list)))
     (cl-find-if (lambda (buffer)
                   (string-prefix-p prefix (buffer-name buffer)))
@@ -94,7 +93,6 @@ TITLE - title of the window."
        (with-current-buffer buffer
          (put 'awesome--caller-pid 'permanent-local t)
          (setq-local awesome--caller-pid pid)
-         (markdown-mode)
          (clipboard-yank)
          (deactivate-mark)
          (awesome-edit-with-emacs-mode +1))
@@ -130,6 +128,24 @@ TITLE - title of the window."
       "%s 'require(\"emacs\").switch_to_app(%s)'"
       awesome-client pid))))
 
+(defun awesome-switch-to-prev-app-and-type (&optional text)
+  "Find previously focused app and type given text.
+Useful for sending text from Emacs to text input of the app."
+  (let ((awesome-client (executable-find "awesome-client"))
+        (text (or text
+                  (when (region-active-p)
+                    (buffer-substring-no-properties
+                     (region-beginning)
+                     (region-end))))))
+    (unless awesome-client
+      (user-error "awesome-client not found"))
+    (when text
+      (call-process-shell-command
+       (format
+        "%s 'require(\"emacs\").switch_to_prev_app_and_type(\"%s\")'"
+        awesome-client
+        (substring-no-properties text))))))
+
 (defun awesome-cancel-edit-with-emacs ()
   "Invoke it to cancel previous editing session."
   (interactive)
@@ -150,6 +166,26 @@ TITLE - title of the window."
    (window . root)
    (window-width . 0.30)))
 
-(provide 'awesome-wm-helpers)
+(defun awesome-edit-with-emacs-h (buffer-name pid title)
+  (with-current-buffer (get-buffer buffer-name)
+    ;; need to set a filename, otherwise things like lsp and grip
+    ;; in that buffer won't work
+    (let ((fname (thread-last
+                   (format "/tmp/%s_%s" pid title)
+                   (replace-regexp-in-string "[<>\\|?*%/\":]" "_"))))
+      (set-visited-file-name fname))
+    (set-buffer-modified-p nil)
+    (markdown-mode)
+    (awesome-edit-with-emacs-mode)
+    (setq-local awesome--caller-pid pid)
+    (evil-insert +1)))
 
-;;; awesome-wm-hepers.el ends here
+(defun awesome-before-finish-edit-with-emacs-h (bufname pid)
+  (with-current-buffer bufname
+    (set-buffer-modified-p nil)))
+
+(add-hook 'awesome-edit-with-emacs-hook #'awesome-edit-with-emacs-h)
+(add-hook 'awesome-before-finish-edit-with-emacs-hook #'awesome-before-finish-edit-with-emacs-h)
+
+(provide 'awesome-wm-helpers)
+;;; awesome-wm-helpers.el ends here

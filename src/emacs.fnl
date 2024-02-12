@@ -51,10 +51,23 @@
      (when client.focus
        (awful.spawn.with_shell "xdotool key ctrl+v")))))
 
+(fn switch_to_prev_app_and_type [text]
+  "Find previously focused app and type given text.
+Useful for sending text from Emacs to text input of the app."
+  (awful.client.focus.byidx -1)
+  (gears.timer.weak_start_new
+   0.05
+   (fn []
+     (when client.focus
+       (awful.spawn.with_shell (string.format "xdotool type \"%s\"" text)))
+     false)))
+
 (init)
 
 {
  : edit-with-emacs
  : switch_to_client_and_paste
  : switch_to_app
+ ;; : get-apps
+ : switch_to_prev_app_and_type
  }
