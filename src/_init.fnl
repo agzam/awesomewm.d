@@ -21,6 +21,7 @@
          : join
          : last
          : map
+         : map-kv
          : mapcat
          : merge
          : noop

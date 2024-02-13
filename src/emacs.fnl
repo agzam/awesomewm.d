@@ -59,7 +59,8 @@ Useful for sending text from Emacs to text input of the app."
    0.05
    (fn []
      (when client.focus
-       (awful.spawn.with_shell (string.format "xdotool type \"%s\"" text)))
+       (awful.spawn.with_shell
+        (string.format "xdotool type --clearmodifiers '%s'" text)))
      false)))
 
 (init)

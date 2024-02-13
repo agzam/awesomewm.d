@@ -127,6 +127,11 @@
                      _ t (ipairs tbls)]
           (concat acc [(apply f (table.unpack t))])))))
 
+(fn map-kv [f coll]
+  "Maps through an associative table, passing each k/v pair to f"
+  (icollect [k v (pairs coll)]
+    (f k v)))
+
 (fn flatten [item result]
   (let [result (or result {})]
     (if (= (type item) :table)
@@ -184,6 +189,7 @@
  : join
  : last
  : map
+ : map-kv
  : mapcat
  : merge
  : noop

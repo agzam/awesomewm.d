@@ -142,7 +142,10 @@ Useful for sending text from Emacs to text input of the app."
     (when text
       (call-process-shell-command
        (format
-        "%s 'require(\"emacs\").switch_to_prev_app_and_type(\"%s\")'"
+        (concat
+         "%s '"
+         "local text=[[%s]]"
+         "require(\"emacs\").switch_to_prev_app_and_type(text)'")
         awesome-client
         (substring-no-properties text))))))
 
