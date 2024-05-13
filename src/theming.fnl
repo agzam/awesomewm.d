@@ -6,7 +6,7 @@
 (local {:apply_dpi dpi} (require "beautiful.xresources"))
 
 (let [theme (-> ((loadfile (.. (gears.filesystem.get_themes_dir) "zenburn/theme.lua")))
-             (merge {:font "hermit 8"
+             (merge {:font "hermit 10"
                      :useless_gap (dpi 6)
                      :border_width (dpi 3)
                      :border_focus "#fcba03"

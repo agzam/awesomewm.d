@@ -19,6 +19,9 @@
 ;;; Code:
 
 (require 'cl-lib)
+(require 'subr-x)
+(require 'markdown-mode)
+(require 'evil)
 
 (defvar awesome-edit-with-emacs-mode-map
   (let ((map (make-sparse-keymap)))
@@ -79,6 +82,7 @@ Hook function must accept arguments:
 The caller is responsible for setting up the arguments.
 PID - process ID of the caller app.
 TITLE - title of the window."
+  (run-hook-with-args 'awesome-before-edit-with-emacs-hook pid title)
   (let* ((buf-name (concat "* awesome-edit " title " *"))
          ;; hook functions later could modify the buffer name, you can't expect to always
          ;; find the buffer originating from the same app using its full-name, but prefix
@@ -104,7 +108,7 @@ TITLE - title of the window."
   (interactive)
   (let ((awesome-client (executable-find "awesome-client")))
     (unless awesome-client
-      (user-error "awesome-client not found"))
+      (user-error "Err. awesome-client not found"))
     (when (boundp 'awesome--caller-pid)
       (let ((pid (buffer-local-value 'awesome--caller-pid (current-buffer))))
         (run-hook-with-args
@@ -122,32 +126,38 @@ TITLE - title of the window."
 (defun awesome-switch-to-app (pid)
   "Switch to app with the given PID."
   (let ((awesome-client (executable-find "awesome-client")))
-    (unless awesome-client (user-error "awesome-client not found"))
+    (unless awesome-client (user-error "Err. awesome-client not found"))
     (call-process-shell-command
      (format
       "%s 'require(\"emacs\").switch_to_app(%s)'"
       awesome-client pid))))
 
+(defun awesome-get-default-browser ()
+  "Determine default browser class."
+  (if-let* ((xdg-setttins (executable-find "xdg-settings"))
+            (browser-class (thread-last
+                             (shell-command-to-string
+                              (concat xdg-setttins " get default-web-browser"))
+                             (replace-regexp-in-string "\\(\n\\|\\.desktop\\)" ""))))
+      browser-class
+    (user-error "Err. xdg-settings failed to determine the browser, or xdotool not found")))
+
 (defun awesome-switch-to-prev-app-and-type (&optional text)
-  "Find previously focused app and type given text.
+  "Find previously focused app and type given TEXT.
 Useful for sending text from Emacs to text input of the app."
   (let ((awesome-client (executable-find "awesome-client"))
-        (text (or text
-                  (when (region-active-p)
-                    (buffer-substring-no-properties
-                     (region-beginning)
-                     (region-end))))))
+        (script (format "cur_win_id=$(%1$s getactivewindow);
+                         %1$s search --onlyvisible --class %2$s windowactivate --sync key --clearmodifiers ctrl+v sleep 0.1;
+                         %1$s key --clearmodifiers Tab sleep 0.1;
+                         %1$s windowactivate $cur_win_id"
+                        (executable-find "xdotool")
+                        (awesome-get-default-browser))))
     (unless awesome-client
-      (user-error "awesome-client not found"))
-    (when text
-      (call-process-shell-command
-       (format
-        (concat
-         "%s '"
-         "local text=[[%s]]"
-         "require(\"emacs\").switch_to_prev_app_and_type(text)'")
-        awesome-client
-        (substring-no-properties text))))))
+      (user-error "Err. awesome-client not found"))
+    (if (use-region-p)
+        (clipboard-kill-ring-save (region-beginning) (region-end))
+      (kill-new text))
+    (call-process "/bin/sh" nil (current-buffer) nil "-c" script)))
 
 (defun awesome-cancel-edit-with-emacs ()
   "Invoke it to cancel previous editing session."
@@ -159,15 +169,6 @@ Useful for sending text from Emacs to text input of the app."
        (buffer-name (current-buffer)) pid)
       (kill-buffer-and-window)
       (awesome-switch-to-app pid))))
-
-(add-to-list
- 'display-buffer-alist
- '("\\* awesome-edit.*"
-   (display-buffer-reuse-window
-    display-buffer-in-direction)
-   (direction . right)
-   (window . root)
-   (window-width . 0.30)))
 
 (defun awesome-edit-with-emacs-h (buffer-name pid title)
   (with-current-buffer (get-buffer buffer-name)
@@ -183,10 +184,35 @@ Useful for sending text from Emacs to text input of the app."
     (setq-local awesome--caller-pid pid)
     (evil-insert +1)))
 
+(defun awesome--display-buffer-opposite-side ()
+  "Return `left' or `right' based on current affinity of the frame position."
+  (let* ((frame-geometry (frame-monitor-geometry))
+         (frame-x (car (frame-position)))
+         (monitor-width (nth 2 frame-geometry))
+         (left-side (- frame-x (car frame-geometry))))
+    ;; we want window appear on the right side, when Emacs frame is on the left and vice-versa
+    (if (< (/ monitor-width 3) left-side)
+        'left
+      'right)))
+
+(defun awesome--set-display-buffer-alist-h (_ _)
+  (let ((pattern "\\* awesome-edit.*"))
+    ;; remove previous value
+    (setq display-buffer-alist (delq (assoc pattern display-buffer-alist) display-buffer-alist))
+    (add-to-list
+     'display-buffer-alist
+     `(,pattern
+       (display-buffer-reuse-window
+        display-buffer-in-direction)
+       (direction . ,(awesome--display-buffer-opposite-side))
+       (window . root)
+       (window-width . 0.30)))))
+
 (defun awesome-before-finish-edit-with-emacs-h (bufname pid)
   (with-current-buffer bufname
     (set-buffer-modified-p nil)))
 
+(add-hook 'awesome-before-edit-with-emacs-hook #'awesome--set-display-buffer-alist-h)
 (add-hook 'awesome-edit-with-emacs-hook #'awesome-edit-with-emacs-h)
 (add-hook 'awesome-before-finish-edit-with-emacs-hook #'awesome-before-finish-edit-with-emacs-h)
 

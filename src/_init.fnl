@@ -59,10 +59,6 @@
                       :text (tostring err)})
      (set in_error? false))))
 
-
-
-(awful.spawn.with_shell (.. "source " (os.getenv "HOME") "/.xprofile &"))
-
 (awful.spawn.once "emacs" {:tag (-?> screen (. 1) (. :tags) (. 1))
                            :instance :emacs
                            :screen "DP-4"}
@@ -75,7 +71,7 @@
  (fn [_ _ _ exit-code]
    (when (= exit-code 1)
      (awful.spawn.with_line_callback
-      "brave"
+      "brave --force-device-scale-factor=1.1"
       {:stdout (fn [] (let [clnt (-?>> (client.get) (filter (fn [c] (= c.class :Brave-browser))) first)]
                         (when clnt (clnt:move_to_screen "DP-4"))))}))))
 

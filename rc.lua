@@ -22,7 +22,8 @@ fennel.path = fennel.path .. ";"
   .. cfg_dir .. "src/?.fnl;"
   .. cfg_dir .. "lib/?.fnl;"
 
-fennel["macro-path"] = cfg_dir .. "src/?.fnl;";
+fennel["macro-path"] = cfg_dir .. "src/?.fnl;"
+  .. cfg_dir .. "lib/?.fnl;"
 
 -- searcher = fennel.makeSearcher({
 --     correlate = true,

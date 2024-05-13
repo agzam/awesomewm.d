@@ -26,7 +26,7 @@
     (copy-to-clipboard
      (fn []
        (let [cmd (string.format
-                  "emacsclient -e '(awesome-edit-with-emacs %s \"%s\")'"
+                  "emacsclient -e '(awesome-edit-with-emacs %s \"%s\")' &"
                   client.focus.pid
                   (gears.string.xml_escape
                    client.focus.name))
@@ -65,10 +65,62 @@ Useful for sending text from Emacs to text input of the app."
 
 (init)
 
+
+;; (local coroutine (require :coroutine))
+
+;; (fn get-apps []
+;;   (menu-gen.generate (fn [x] (awesome.emit_signal "emacs::list-of-apps" x)))
+;;   (awesome.connect_signal
+;;    "emacs::list-of-apps"
+;;    (fn [apps]
+;;      (lame_dbg apps))))
+
+
+;; (fn my-async-fn [cb]
+;;   (let [co (coroutine.create (fn []
+;;                                ))]
+;;    (menu-gen.generate
+;;     (fn [x]
+;;       (cb x)))))
+
+;; (fn my-async-fn [cb]
+;;   (menu-gen.generate
+;;    (fn [x]
+;;      (gears.times
+;;       {:autostart true
+;;        :call_now true
+;;        :timeout 0.1
+;;        :calback (fn [] (cb x))}))))
+
+
+;; (fn get-apps []
+;;   (var val nil)
+;;   (var co (coroutine.create (fn []
+;;                               (awesome.connect_signal "emacs::list-of-apps" (fn [apps] (set val apps)))
+;;                               (menu-gen.generate
+;;                                (fn [x]
+;;                                  (awesome.emit_signal "emacs::list-of-apps" x))))))
+;;   (coroutine.resume co)
+;;   (while (not val)
+;;     (os.execute "sleep 0.1")
+;;     (lame_dbg val))
+;;   (lame_dbg "finally" val))
+
+(local debug (require :gears.debug))
+
+(local menu-gen (require :menubar.menu_gen))
+
+(fn get_apps []
+  (menu-gen.generate
+   (fn [x] (set _G.list_of_apps x)))
+  "one two three")
+
+(get_apps)
+
 {
  : edit-with-emacs
  : switch_to_client_and_paste
  : switch_to_app
- ;; : get-apps
+ : get_apps
  : switch_to_prev_app_and_type
  }
