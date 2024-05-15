@@ -9,7 +9,10 @@
                  (filter (fn [c] (= c.class app-class)))
                  first)
         app-name (if (= app-class "Brave-browser") "Brave" app-class)]
-    (if cl (awful.client.focus.byidx 0 cl)
+    (if cl
+        (do
+          (set cl.minimized false)
+          (awful.client.focus.byidx 0 cl))
         (do
           (menubar.refresh)
           (gears.timer.weak_start_new
@@ -64,7 +67,12 @@
 (local
  windows
  (concat
-  [{:description "left window"
+  [{:description "other window"
+    :pattern [:w]
+    :handler (fn [mode]
+               (awful.client.focus.byidx 1)
+               (mode.stop))}
+   {:description "left window"
     :pattern [:h]
     :handler (fn [mode]
                (awful.client.focus.global_bydirection :left)
@@ -96,12 +104,24 @@
                       (focus-or-launch c.class)
                       false))
                    (mode.stop))))}
+   {:description "window minimize"
+    :pattern ["-"]
+    :handler (fn [mode]
+               (let [c client.focus]
+                 (set c.minimized (not c.minimized))
+                 (mode.stop)))}
    {:description "window maximize"
     :pattern [:m]
     :handler (fn [mode]
                (let [c client.focus]
                  (set c.maximized (not c.maximized))
                  (c:raise)
+                 (mode.stop)))}
+   {:description "toggle floating"
+    :pattern ["`"]
+    :handler (fn [mode]
+               (let [c client.focus]
+                 (set c.floating (not c.floating))
                  (mode.stop)))}
    {:description "fullscreen"
     :pattern [:f]

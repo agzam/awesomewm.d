@@ -82,7 +82,6 @@
                :keybidings {}}))
            "Main modal"
            :awesome)
-  (map-key superkey :s hotkeys_popup.show_help "this help" :awesome)
   (map-key superkey :6 awesome.restart "reload awesome" :awesome)
   (map-key [modkey :Control] :r awesome.restart "reload awesome" :awesome)
   ;; (map-key [modkey] "." (fn [] (awesome.emit_signal "bling::window_switcher::turn_on"))
@@ -96,77 +95,20 @@
   (map-key [modkey :Control] ","
            (fn [c] (focus-byidx-global -1 c))
            "focus prev by index" :client)
-
-  ;; (awful.key [modkey] "." (fn [c]
-  ;;                           (awful.client.focus.byidx 1)
-  ;;                           (when c.focus
-  ;;                             (awful.client.setmaster c.focus)))
-  ;;            {:description "next to master" :group :client})
-  ;; (awful.key [modkey] "," (fn [c]
-  ;;                           (awful.client.focus.history.previous)
-  ;;                           (when c.focus
-  ;;                             (awful.client.setmaster c.focus)))
-  ;;            {:description "prev to master" :group :client})
-  (->>  {:brave [:Brave-browser :6]
-         :emacs [:Emacs :7]
-         :kitty [:kitty :8]}
-        (map-kv
-         (fn [app [class key]]
-           (map-key
-            superkey key
-            #(awful.client.run_or_raise
-              app
-              (fn [c] (awful.rules.match c {:class class})))
-            (.. "jump to " app) :launcher)))
-        flatten)
-
-  (map-key [modkey :Control] "]"
-           (fn [] (awful.tag.incmwfact 0.01))
-           "widen horizontally" :layout)
-  (map-key [modkey :Control] "["
-           (fn [] (awful.tag.incmwfact -0.01))
-           "shrink horizontally" :layout)
   (map-key [modkey :Control] :Left #(awful.layout.inc -1)
            "Layout prev" :layout)
   (map-key [modkey :Control] :Right #(awful.layout.inc 1)
            "Layout next" :layout)
-
-  (map-key superkey :r #(-?> (awful.screen.focused)
-                             (. :my_promptbox)
-                             (: :run))
-           "run prompt" :launcher)
-  (map-key superkey :l (fn []
-                         (menubar.refresh)
-                         (menubar.show))
-           "show the menubar" :launcher)
   (map-key [modkey :Control] :o edit-with-emacs
            "edit with Emacs" :client)))
 
 (local
  client_keys
  (gears.table.join
-  ;; (awful.key [modkey :Control] "."
-  ;;            (fn [c] (focus_by_idx 1 c))
-  ;;            {:description "focus next by index" :group :client})
-  ;; (awful.key [modkey :Control] ","
-  ;;            (fn [c] (focus_by_idx -1 c))
-  ;;            {:description "focus prev by index" :group :client})
   (map-key [modkey :Control] :Return
            (fn [c]
              (c:swap (awful.client.getmaster)))
            "move to master" :client)
-  (map-key superkey :o (fn [c] (c:move_to_screen))
-           "move to screen" :client)
-  (map-key superkey :f
-           (fn [c]
-             (set c.fullscreen (not c.fullscreen))
-             (c:raise))
-           "fullscreen" :client)
-  (map-key superkey :m
-           (fn [c]
-             (set c.maximized (not c.maximized))
-             (c:raise))
-           "maximize" :client)
   (map-key superkey "\\"
            (fn [c]
              (set c.maximized_vertical
