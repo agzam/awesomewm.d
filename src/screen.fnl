@@ -1,6 +1,7 @@
 (local gears (require :gears))
 (local awful (require :awful))
 (local wibox (require :wibox))
+(local modalawesome (require :modalawesome))
 (local beautiful (require :beautiful))
 (local {: my_keyboard_layout : modkey} (require :keybindings))
 (local {: my_main_menu} (require :menu))
@@ -36,6 +37,7 @@
                                            :menu my_main_menu}))
 
 (local my_text_clock (wibox.widget.textclock))
+
 
 (awesome.connect_signal
  :startup
@@ -77,9 +79,14 @@
       (set scr.my_wibox (awful.wibar {:position :top :screen scr}))
 
       ;; Add widgets to the wibox
-      (let [left (gears.table.join
-                  {:layout wibox.layout.fixed.horizontal}
+      (let [_ (doto modalawesome.active_mode
+                  (: :set_font "hermit 14")
+                  (: :set_forced_width 200))
+            left (gears.table.join
+                  {:layout wibox.layout.fixed.horizontal
+                   :spacing 20}
                   [my_launcher]
+                  [modalawesome.active_mode]
                   [scr.my_taglist]
                   [scr.my_promptbox])
             right (gears.table.join

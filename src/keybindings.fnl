@@ -2,6 +2,7 @@
 (local gears (require :gears))
 (local hotkeys_popup (require :awful.hotkeys_popup))
 (local menubar (require :menubar))
+(local modalawesome (require :modalawesome))
 (local {: modkey
         : superkey
         : all-clients
@@ -71,16 +72,22 @@
 (local
  global_keys
  (gears.table.join
+  (map-key [modkey] :space
+           (fn []
+             (modalawesome.init
+              {:modkey :Mod5
+               :default_mode :root
+               :modes (require :modes)
+               :stop_name "⭐"
+               :keybidings {}}))
+           "Main modal"
+           :awesome)
   (map-key superkey :s hotkeys_popup.show_help "this help" :awesome)
   (map-key superkey :6 awesome.restart "reload awesome" :awesome)
   (map-key [modkey :Control] :r awesome.restart "reload awesome" :awesome)
   ;; (map-key [modkey] "." (fn [] (awesome.emit_signal "bling::window_switcher::turn_on"))
   ;;          "window switcher" :group :client)
 
-
-  (map-key [modkey :Control] "a"
-           (fn [_] (get-apps))
-           "get-apps" :client)
 
   (map-key [modkey :Control] "."
            (fn [c] (focus-byidx-global 1 c))
@@ -125,8 +132,8 @@
            "Layout next" :layout)
 
   (map-key superkey :r #(-?> (awful.screen.focused)
-                            (. :my_promptbox)
-                            (: :run))
+                             (. :my_promptbox)
+                             (: :run))
            "run prompt" :launcher)
   (map-key superkey :l (fn []
                          (menubar.refresh)
@@ -145,9 +152,9 @@
   ;;            (fn [c] (focus_by_idx -1 c))
   ;;            {:description "focus prev by index" :group :client})
   (map-key [modkey :Control] :Return
-             (fn [c]
-               (c:swap (awful.client.getmaster)))
-             "move to master" :client)
+           (fn [c]
+             (c:swap (awful.client.getmaster)))
+           "move to master" :client)
   (map-key superkey :o (fn [c] (c:move_to_screen))
            "move to screen" :client)
   (map-key superkey :f

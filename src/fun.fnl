@@ -167,6 +167,10 @@
   "Return a new list with the element e added at the end"
   (concat tbl [e]))
 
+(fn starts-with? [s prefix]
+  "Check if string s starts with a prefix"
+  (or (= prefix "") (= (s:sub 1 (length prefix)) prefix)))
+
 {
  : apply
  : complement
@@ -200,4 +204,5 @@
  : seq?
  : some
  : take-while
+ : starts-with?
  }

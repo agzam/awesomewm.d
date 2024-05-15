@@ -32,6 +32,7 @@
          : seq?
          : some
          : take-while
+         : starts-with?
          } (require :fun))
 (global { : lame_dbg } (require :core))
 

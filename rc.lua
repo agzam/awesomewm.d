@@ -10,8 +10,8 @@ package.path =
   package.path .. ";"
   .. home .. "/.luarocks/share/lua/5.3/?.lua;"
   .. home .. "/.luarocks/share/lua/5.3/?/?.lua;"
-  .. cfg_dir .. "lib/?/?.lua;"
-  .. cfg_dir .. "lib/?.lua"
+  .. cfg_dir .. "lib/?.lua;"
+  .. cfg_dir .. "lib/?/init.lua;"
 
 
 fennel = require("fennel")
@@ -20,6 +20,7 @@ fennel = require("fennel")
 fennel.path = fennel.path .. ";"
   .. package.path .. ";"
   .. cfg_dir .. "src/?.fnl;"
+  .. cfg_dir .. "lib/?/?.fnl;"
   .. cfg_dir .. "lib/?.fnl;"
 
 fennel["macro-path"] = cfg_dir .. "src/?.fnl;"
