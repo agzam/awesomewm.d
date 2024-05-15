@@ -26,6 +26,30 @@
                (awful.spawn.with_shell cmd)
                false)))))))
 
+(fn ytm-player-app-id [cb]
+  (menubar.refresh)
+  (gears.timer.weak_start_new
+   0.1
+   (fn []
+     (let [cl (-?> (-?>>
+                    menubar.menu_entries
+                    (filter (fn [x] (= x.name "YouTube Music")))
+                    first)
+                   (. :cmdline)
+                   (: :match "--app%-id=(%w+)"))]
+       (cb cl) false))))
+
+(fn activate-ytm-player []
+  (ytm-player-app-id
+   (fn [app-id]
+     (let [fnd (-?>> (all-clients)
+                     (filter
+                      (fn [c]
+                        (= c.instance (.. "crx_" app-id))))
+                     first)]
+       (if fnd (awful.client.focus.byidx 0 fnd)
+           (focus-or-launch "YouTube Music"))))))
+
 (local
  esc-and-root
  [{:description "show help"
@@ -82,6 +106,16 @@
     :handler (fn [mode]
                (awful.client.focus.global_bydirection :right)
                (mode.stop))}
+   {:description "upper window"
+    :pattern [:k]
+    :handler (fn [mode]
+               (awful.client.focus.global_bydirection :up)
+               (mode.stop))}
+   {:description "bottom window"
+    :pattern [:j]
+    :handler (fn [mode]
+               (awful.client.focus.global_bydirection :down)
+               (mode.stop))}
    {:description "window move left"
     :pattern [:H]
     :handler (fn [mode]
@@ -91,6 +125,16 @@
     :pattern [:L]
     :handler (fn [mode]
                (awful.client.swap.global_bydirection :right)
+               (mode.stop))}
+   {:description "window move up"
+    :pattern [:K]
+    :handler (fn [mode]
+               (awful.client.swap.global_bydirection :up)
+               (mode.stop))}
+   {:description "window move down"
+    :pattern [:J]
+    :handler (fn [mode]
+               (awful.client.swap.global_bydirection :down)
                (mode.stop))}
    {:description "move to other screen"
     :pattern [:o]
@@ -153,6 +197,11 @@
     :handler (fn [mode]
                (focus-or-launch :kitty)
                (mode.stop))}
+   {:description "YouTube Music Player"
+    :pattern [:m]
+    :handler (fn [mode]
+               (activate-ytm-player)
+               (mode.stop))}
    {:description "launcher"
     :pattern [:l]
     :handler (fn [mode]
@@ -170,30 +219,6 @@
     :pattern [:Escape]
     :handler (fn [mode] (mode.stop))}]
   esc-and-root))
-
-(fn ytm-player-app-id [cb]
-  (menubar.refresh)
-  (gears.timer.weak_start_new
-   0.1
-   (fn []
-     (let [cl (-?> (-?>>
-                    menubar.menu_entries
-                    (filter (fn [x] (= x.name "YouTube Music")))
-                    first)
-                   (. :cmdline)
-                   (: :match "--app%-id=(%w+)"))]
-       (cb cl) false))))
-
-(fn activate-ytm-player []
-  (ytm-player-app-id
-   (fn [app-id]
-     (let [fnd (-?>> (all-clients)
-                     (filter
-                      (fn [c]
-                        (= c.instance (.. "crx_" app-id))))
-                     first)]
-       (if fnd (awful.client.focus.byidx 0 fnd)
-           (focus-or-launch "YouTube Music"))))))
 
 (fn ytm-press-key [key stay]
   (let [current client.focus]
