@@ -4,11 +4,17 @@
 (local menubar (require :menubar))
 (local {: all-clients} (require :core))
 
-(fn focus-or-launch [app-class]
+(fn focus-or-launch [app-class window-id]
   (let [cl (-?>> (all-clients)
-                 (filter (fn [c] (= c.class app-class)))
+                 (filter
+                  (fn [c]
+                    (if window-id
+                        (= c.window window-id)
+                        (= c.class app-class))))
                  first)
         app-name (if (= app-class "Brave-browser") "Brave" app-class)]
+    ;; if we find the matching client, we switch to it,
+    ;; otherwise find the app with the same name, and launch it
     (if cl
         (do
           (set cl.minimized false)
@@ -47,8 +53,25 @@
                       (fn [c]
                         (= c.instance (.. "crx_" app-id))))
                      first)]
-       (if fnd (awful.client.focus.byidx 0 fnd)
+       (if fnd
+           (do
+             (set fnd.minimized false)
+             (awful.client.focus.byidx 0 fnd))
            (focus-or-launch "YouTube Music"))))))
+
+(fn ytm-press-key [key stay]
+  (let [current client.focus]
+    (activate-ytm-player)
+    (gears.timer.weak_start_new
+     0.1
+     (fn []
+       (awful.spawn.easy_async
+        (..
+         "xdotool key --clearmodifiers Escape key Escape key i sleep 0.1 key " key)
+        (fn []
+          (when (not stay)
+           (focus-or-launch nil current.window))))
+       false))))
 
 (local
  esc-and-root
@@ -219,20 +242,6 @@
     :pattern [:Escape]
     :handler (fn [mode] (mode.stop))}]
   esc-and-root))
-
-(fn ytm-press-key [key stay]
-  (let [current client.focus]
-    (activate-ytm-player)
-    (gears.timer.weak_start_new
-     0.1
-     (fn []
-       (awful.spawn.easy_async
-        (..
-         "xdotool key --clearmodifiers Escape key Escape key i key " key)
-        (fn []
-          (when (not stay)
-           (focus-or-launch current.class))))
-       false))))
 
 (local
  media
