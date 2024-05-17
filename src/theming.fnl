@@ -6,16 +6,17 @@
 (local {:apply_dpi dpi} (require "beautiful.xresources"))
 
 (let [theme (-> ((loadfile (.. (gears.filesystem.get_themes_dir) "zenburn/theme.lua")))
-             (merge {:font "hermit 10"
-                     :useless_gap (dpi 6)
-                     :border_width (dpi 3)
-                     :border_focus "#fcba03"
-                     :bg_normal "#000"
-                     :wallpaper (fn [s]
-                                  (let [wps ["wallpaper_wide.png"
-                                             "wallpaper_portrait.png"]]
-                                    (-?>> (. wps s.index)
-                                         (.. "/home/ag/Pictures/"))))}))]
+                (merge {:font "hermit 10"
+                        :useless_gap (dpi 6)
+                        :border_width (dpi 3)
+                        :border_focus "#fcba03"
+                        :border_color_active "#fcba03"
+                        :bg_normal "#000"
+                        :wallpaper (fn [s]
+                                     (let [wps ["wallpaper_wide.png"
+                                                "wallpaper_portrait.png"]]
+                                       (-?>> (. wps s.index)
+                                             (.. "/home/ag/Pictures/"))))}))]
   (beautiful.init theme))
 
 (fn set_wallpaper [s]

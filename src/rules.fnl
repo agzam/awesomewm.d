@@ -104,12 +104,16 @@
    (c:emit_signal
     "request::activate"
     :mouse_enter {:raise false})))
+
 (client.connect_signal
  :focus
- (fn [c] (set c.border_color beautiful.border_focus)))
+ (fn [c]
+   (set c.border_color beautiful.border_color_active)))
+
 (client.connect_signal
  :unfocus
- (fn [c] (set c.border_color beautiful.border_normal)))
+ (fn [c]
+   (set c.border_color beautiful.border_color_normal)))
 
 (local browser (require :browser))
 
@@ -122,5 +126,5 @@
  (fn [c]
    (each [_ ks (pairs app_local_keys)]
      (when (= c.class ks.app_local_class)
-       (let [keys (merge (c.keys c) ks)]
-         (c.keys c keys))))))
+       (let [keys (merge c.keys ks)]
+         (tset c :keys keys))))))
