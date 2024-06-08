@@ -19,6 +19,11 @@
                     :screen awful.screen.preferred
                     :placement (+ awful.placement.no_overlap
                                   awful.placement.no_offscreen)}}
+      {:rule_any {:class ["Brave browser"]
+                  :name ["Open File"]}
+       :properties {:floating true
+                    :placement
+                    (fn [c] (awful.placement.centered c))}}
       {:rule_any {:instance [:DTA    ; Firefox addon DownThemAll.
                              :copyq  ; Includes session name in class.
                              :pinentry]
@@ -44,8 +49,37 @@
 
       ;; Add titlebars to normal clients and dialogs
       {:rule_any {:type [:normal :dialog]}
-       :properties {:titlebars_enabled true}}])
+       :properties {:titlebars_enabled true}}
 
+      {:rule {:class :mpv}
+       :properties {:ontop true
+                    :floating true}}])
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; persist window geometry for floating windows ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(var floating-geometries {})
+
+(client.connect_signal
+ :property::floating_geometry
+ (fn [c]
+   (when c.class
+     (set floating-geometries
+          (merge floating-geometries {c.class (c:geometry)})))))
+
+(client.connect_signal
+ :manage
+ (fn [c]
+   (set floating-geometries (table.load :geometries))
+   (let [g (get floating-geometries c.class)]
+     (when g (c:geometry g)))))
+
+(client.connect_signal
+ :unmanage
+ (fn [_] (table.save floating-geometries "geometries")))
+
+;; end - persist window geometry for floating windows
 
 ;; Signal function to execute when a new client appears.
 (client.connect_signal
@@ -95,7 +129,7 @@
                 {:layout (wibox.layout.fixed.horizontal)})
          titlebar-args (merge [left middle right]
                               {:layout wibox.layout.align.horizontal})]
-     (: (awful.titlebar c {:size 24}) :setup titlebar-args))))
+     (: (awful.titlebar c {:size 20}) :setup titlebar-args))))
 
 ;; Enable sloppy focus, so that focus follows mouse.
 (client.connect_signal

@@ -83,6 +83,7 @@
       awful.layout.suit.max
       awful.layout.suit.max.fullscreen])
 
+(require :lib.table_save)
 (require :theming)
 (require :screen)
 (require :keybindings)

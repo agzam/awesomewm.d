@@ -47,7 +47,7 @@
       (if (and (= 2 (screen:instances))
                (-> scr.geometry.x (= 0)))
           (do
-            (awful.tag [:1] scr awful.layout.suit.fair.horizontal)
+            (awful.tag [:1] scr awful.layout.suit.tile.bottom)
             (set scr.selected_tag.column_count 1))
           (do
             (awful.tag [:1 :2 :3 :4] scr awful.layout.suit.tile)
