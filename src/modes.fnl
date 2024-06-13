@@ -225,6 +225,11 @@
     :handler (fn [mode]
                (activate-ytm-player)
                (mode.stop))}
+   {:description "MPV"
+    :pattern [:v]
+    :handler (fn [mode]
+               (focus-or-launch :mpv)
+               (mode.stop))}
    {:description "launcher"
     :pattern [:l]
     :handler (fn [mode]
