@@ -2,76 +2,8 @@
 (local hotkeys_popup (require :awful.hotkeys_popup))
 (local gears (require :gears))
 (local menubar (require :menubar))
-(local {: all-clients} (require :core))
-
-(fn focus-or-launch [app-class window-id]
-  (let [cl (-?>> (all-clients)
-                 (filter
-                  (fn [c]
-                    (if window-id
-                        (= c.window window-id)
-                        (= c.class app-class))))
-                 first)
-        app-name (if (= app-class "Brave-browser") "Brave" app-class)]
-    ;; if we find the matching client, we switch to it,
-    ;; otherwise find the app with the same name, and launch it
-    (if cl
-        (do
-          (set cl.minimized false)
-          (awful.client.focus.byidx 0 cl))
-        (do
-          (menubar.refresh)
-          (gears.timer.weak_start_new
-           0.1
-           (fn []
-             (let [cmd (. (-?>>
-                           menubar.menu_entries
-                           (filter (fn [x] (= x.name app-name)))
-                           first)
-                        :cmdline)]
-               (awful.spawn.with_shell cmd)
-               false)))))))
-
-(fn ytm-player-app-id [cb]
-  (menubar.refresh)
-  (gears.timer.weak_start_new
-   0.1
-   (fn []
-     (let [cl (-?> (-?>>
-                    menubar.menu_entries
-                    (filter (fn [x] (= x.name "YouTube Music")))
-                    first)
-                   (. :cmdline)
-                   (: :match "--app%-id=(%w+)"))]
-       (cb cl) false))))
-
-(fn activate-ytm-player []
-  (ytm-player-app-id
-   (fn [app-id]
-     (let [fnd (-?>> (all-clients)
-                     (filter
-                      (fn [c]
-                        (= c.instance (.. "crx_" app-id))))
-                     first)]
-       (if fnd
-           (do
-             (set fnd.minimized false)
-             (awful.client.focus.byidx 0 fnd))
-           (focus-or-launch "YouTube Music"))))))
-
-(fn ytm-press-key [key stay]
-  (let [current client.focus]
-    (activate-ytm-player)
-    (gears.timer.weak_start_new
-     0.1
-     (fn []
-       (awful.spawn.easy_async
-        (..
-         "xdotool key --clearmodifiers Escape key Escape key i sleep 0.1 key " key)
-        (fn []
-          (when (not stay)
-           (focus-or-launch nil current.window))))
-       false))))
+(local apps (require :apps))
+(local media (require :media))
 
 (local
  esc-and-root
@@ -168,7 +100,7 @@
                    (gears.timer.weak_start_new
                     0.01
                     (fn []
-                      (focus-or-launch c.class)
+                      (apps.focus-or-launch c.class)
                       false))
                    (mode.stop))))}
    {:description "window minimize"
@@ -208,27 +140,27 @@
   [{:description "Emacs"
     :pattern [:e]
     :handler (fn [mode]
-               (focus-or-launch :Emacs)
+               (apps.focus-or-launch :Emacs)
                (mode.stop))}
    {:description "Browser"
     :pattern [:b]
     :handler (fn [mode]
-               (focus-or-launch :Brave-browser)
+               (apps.focus-or-launch :Brave-browser)
                (mode.stop))}
    {:description "Terminal"
     :pattern [:i]
     :handler (fn [mode]
-               (focus-or-launch :kitty)
+               (apps.focus-or-launch :kitty)
                (mode.stop))}
    {:description "YouTube Music Player"
     :pattern [:m]
     :handler (fn [mode]
-               (activate-ytm-player)
+               (media.activate-ytm-player)
                (mode.stop))}
    {:description "MPV"
     :pattern [:v]
     :handler (fn [mode]
-               (focus-or-launch :mpv)
+               (apps.focus-or-launch :mpv)
                (mode.stop))}
    {:description "launcher"
     :pattern [:l]
@@ -256,7 +188,7 @@
     :handler
     (fn [mode]
       (mode.stop)
-      (activate-ytm-player))}
+      (media.activate-ytm-player))}
    {:description "mute/unmute"
     :pattern [:m]
     :handler
@@ -268,7 +200,7 @@
     :handler
     (fn [mode]
       (mode.stop)
-      (ytm-press-key "semicolon"))}
+      (media.ytm-press-key "semicolon"))}
    {:description "volume up"
     :pattern [:k]
     :handler
@@ -290,31 +222,31 @@
     :handler
     (fn [mode]
       (mode.stop)
-      (ytm-press-key :j))}
+      (media.ytm-press-key :j))}
    {:description "prev song"
     :pattern [:h]
     :handler
     (fn [mode]
       (mode.stop)
-      (ytm-press-key :k))}
+      (media.ytm-press-key :k))}
    {:description "like song"
     :pattern ["*"]
     :handler
     (fn [mode]
       (mode.stop)
-      (ytm-press-key "KP_Add"))}
+      (media.ytm-press-key "KP_Add"))}
    {:description "hate song"
     :pattern ["#"]
     :handler
     (fn [mode]
       (mode.stop)
-      (ytm-press-key "minus"))}
+      (media.ytm-press-key "minus"))}
    {:description "search"
     :pattern ["/"]
     :handler
     (fn [mode]
       (mode.stop)
-      (ytm-press-key "slash" :stay))}]
+      (media.ytm-press-key "slash" :stay))}]
   esc-and-root))
 
 {: root

@@ -72,7 +72,7 @@
  (fn [_ _ _ exit-code]
    (when (= exit-code 1)
      (awful.spawn.with_line_callback
-      "brave --force-device-scale-factor=1.1"
+      "brave --high-dpi-support=1 --force-device-scale-factor=1.1"
       {:stdout (fn [] (let [clnt (-?>> (client.get) (filter (fn [c] (= c.class :Brave-browser))) first)]
                         (when clnt (clnt:move_to_screen "DP-4"))))}))))
 
