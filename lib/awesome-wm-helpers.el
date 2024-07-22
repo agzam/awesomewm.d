@@ -175,9 +175,13 @@ Useful for sending text from Emacs to text input of the app."
     ;; need to set a filename, otherwise things like lsp and grip
     ;; in that buffer won't work
     (let ((fname (thread-last
-                   (format "/tmp/%s_%s" pid title)
-                   (replace-regexp-in-string "[<>\\|?*%/\":]" "_"))))
-      (set-visited-file-name fname))
+                   (format "%s_%s" pid title)
+                   (replace-regexp-in-string "[<>\\|?*%/\":]" "_")
+                   (format "/tmp/%s"))))
+      (set-visited-file-name fname)
+      ;; setting filename renames the buffer, we can't afford that,
+      ;; otherwise running edit fn again won't find it
+      (rename-buffer buffer-name))
     (set-buffer-modified-p nil)
     (markdown-mode)
     (awesome-edit-with-emacs-mode)

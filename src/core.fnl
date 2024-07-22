@@ -12,6 +12,17 @@
     (-?>> (all-screens)
           (mapcat (fn [scr] (when scr (scr:get_all_clients stacked)))))))
 
+(fn executable-find [cmd]
+  (let [result (io.popen (.. "which " cmd))]
+    (if (= (result:read "*a") "")
+        (do
+          (naughty.notify
+            {:preset naughty.config.presets.critical
+             :title (string.format "Error: %s not found" cmd)
+             :text (string.format "Please install %s and ensure it's in your PATH." cmd)})
+          (error (string.format "%s not found in PATH" cmd)))
+        true)))
+
 (fn shellout [command]
   (let [f (io.popen command)
         stdout (f:read :*all)]
@@ -71,4 +82,5 @@ To be used for 'faking' input, when you need to rebind one keybinding to another
  : shellout
  : simulate-key
  : superkey
+ : executable-find
  }

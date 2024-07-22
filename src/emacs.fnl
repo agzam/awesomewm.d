@@ -1,6 +1,7 @@
 (local awful (require :awful))
 (local gears (require :gears))
 (local { : shellout
+         : executable-find
          : all-clients} (require :core))
 
 (fn init []
@@ -10,14 +11,15 @@
     (awful.spawn.with_shell cmd)))
 
 (fn copy-to-clipboard [cb]
-  (let [clb (shellout "xsel -ob")
-        pri (shellout "xsel -op")]
-    (when (or (= pri clb) (empty? pri))
-      (awful.spawn.with_shell
-       "xdotool key --clearmodifiers ctrl+a"))
-    (awful.spawn.easy_async_with_shell
-     "xdotool key --clearmodifiers ctrl+c"
-     cb)))
+  (when (executable-find "xsel")
+    (let [clb (shellout "xsel -ob")
+          pri (shellout "xsel -op")]
+      (when (or (= pri clb) (empty? pri))
+        (awful.spawn.with_shell
+         "xdotool key --clearmodifiers ctrl+a"))
+      (awful.spawn.easy_async_with_shell
+       "xdotool key --clearmodifiers ctrl+c"
+       cb))))
 
 (fn edit-with-emacs []
   (init)
