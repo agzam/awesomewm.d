@@ -1,3 +1,4 @@
+(local awful (require :awful))
 (local gears (require :gears))
 (local {: simulate-key } (require :core))
 (local {: modkey} (require :core))
@@ -20,4 +21,10 @@
        (map #(let [k (tostring $1)] (simulate-key [modkey] k [:Control] k)))
        (flatten))))
 
-{ : browser-local-keys }
+(fn open-private-in-new-tab []
+  (awful.tag.viewnext)
+  (awful.spawn "brave --incognito"))
+
+{ : browser-local-keys
+  : open-private-in-new-tab
+  }

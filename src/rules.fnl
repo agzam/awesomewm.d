@@ -18,7 +18,8 @@
                     :buttons client_buttons
                     :screen awful.screen.preferred
                     :placement (+ awful.placement.no_overlap
-                                  awful.placement.no_offscreen)}}
+                                  awful.placement.no_offscreen)
+                    }}
       {:rule_any {:class ["Brave browser"]
                   :name ["Open File"]}
        :properties {:floating true
@@ -53,7 +54,12 @@
 
       {:rule {:class :mpv}
        :properties {:ontop true
-                    :floating true}}])
+                    :floating true}}
+
+     {:rule_any {:class ["Brave browser"]
+                  :name ["YouTube Music.*"]}
+       :properties {:floating false
+                    :screen 2}}])
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; persist window geometry for floating windows ;;

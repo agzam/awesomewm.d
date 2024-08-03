@@ -4,6 +4,7 @@
 (local menubar (require :menubar))
 (local apps (require :apps))
 (local media (require :media))
+(local browser (require :browser))
 
 (local
  esc-and-root
@@ -171,6 +172,11 @@
     :pattern [:b]
     :handler (fn [mode]
                (apps.focus-or-launch :Brave-browser)
+               (mode.stop))}
+   {:description "Browser Private"
+    :pattern [:B]
+    :handler (fn [mode]
+               (browser:open-private-in-new-tab)
                (mode.stop))}
    {:description "Terminal"
     :pattern [:i]
