@@ -1,7 +1,9 @@
 (local awful (require :awful))
 (local gears (require :gears))
 (local {: simulate-key } (require :core))
-(local {: modkey} (require :core))
+(local core (require :core))
+(local {: modkey } core)
+
 
 (local
  browser-local-keys
@@ -21,9 +23,27 @@
        (map #(let [k (tostring $1)] (simulate-key [modkey] k [:Control] k)))
        (flatten))))
 
+(fn get-brave-client []
+  (->> (core.all-clients)
+       (filter (fn [x] (and
+                        (= x.class "Brave-browser")
+                        (starts-with? x.name "New Private Tab"))))
+       first))
+
 (fn open-private-in-new-tab []
   (awful.tag.viewnext)
-  (awful.spawn "brave --incognito"))
+  (awful.spawn.easy_async
+   "brave --incognito"
+   (gears.timer.weak_start_new
+    0.1
+    #(let [bb (get-brave-client)]
+       (when bb (bb:move_to_screen screen.primary)))
+    false))
+  (gears.timer.weak_start_new
+   0.2
+   #(let [bb (get-brave-client)]
+      (set client.focus bb))
+   false))
 
 { : browser-local-keys
   : open-private-in-new-tab
