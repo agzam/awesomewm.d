@@ -4,30 +4,6 @@
 (local naughty (require :naughty))
 (local superkey [modkey :Control :Mod1 :Shift])
 
-(fn all-screens []
-  (icollect [_ s (ipairs screen)] (when s s)))
-
-(fn all-clients []
-  (let [stacked true]
-    (-?>> (all-screens)
-          (mapcat (fn [scr] (when scr (scr:get_all_clients stacked)))))))
-
-(fn executable-find [cmd]
-  (let [result (io.popen (.. "which " cmd))]
-    (if (= (result:read "*a") "")
-        (do
-          (naughty.notify
-            {:preset naughty.config.presets.critical
-             :title (string.format "Error: %s not found" cmd)
-             :text (string.format "Please install %s and ensure it's in your PATH." cmd)})
-          (error (string.format "%s not found in PATH" cmd)))
-        true)))
-
-(fn shellout [command]
-  (let [f (io.popen command)
-        stdout (f:read :*all)]
-    (and (f:close) stdout)))
-
 (fn lame_dbg [obj]
   (let [txt (match (type obj)
               :string obj
@@ -42,6 +18,32 @@
               (awful.spawn.with_shell
                (.. "echo '" txt "' | xsel -i -b")))
             (noti-obj.die naughty.notificationClosedReason.dismissedByUser))})))
+
+(fn all-screens []
+  (icollect [_ s (ipairs screen)] (when s s)))
+
+(fn all-clients []
+  (let [stacked true]
+    (-?>> (all-screens)
+          (mapcat (fn [scr] (when scr (scr:get_all_clients stacked)))))))
+
+(fn executable-find [cmd]
+  (let [result (io.popen (.. "which " cmd))
+        path (result:read "*l")]
+    (if (= path "")
+        (do
+          (naughty.notify
+            {:preset naughty.config.presets.critical
+             :title (string.format "Error: %s not found" cmd)
+             :text (string.format "Please install %s and ensure it's in your PATH." cmd)})
+          (error (string.format "%s not found in PATH" cmd)))
+        path)))
+
+(fn shellout [command]
+  (let [f (io.popen command)
+        stdout (f:read :*all)]
+    (and (f:close) stdout)))
+
 
 (fn release-keys
   [...]

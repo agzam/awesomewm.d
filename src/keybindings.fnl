@@ -100,7 +100,13 @@
   (map-key [modkey :Control] :Right #(awful.layout.inc 1)
            "Layout next" :layout)
   (map-key [modkey :Control] :o edit-with-emacs
-           "edit with Emacs" :client)))
+           "edit with Emacs" :client)
+
+  (map-key superkey "s"
+           (fn []
+             (let [cmd "emacsclient -e '(clipboard->tts)' &"]
+               (awful.spawn.with_shell cmd)))
+           "selection to TTS" :client)))
 
 (local
  client_keys

@@ -11,15 +11,17 @@
     (awful.spawn.with_shell cmd)))
 
 (fn copy-to-clipboard [cb]
-  (when (executable-find "xsel")
-    (let [clb (shellout "xsel -ob")
-          pri (shellout "xsel -op")]
-      (when (or (= pri clb) (empty? pri))
-        (awful.spawn.with_shell
-         "xdotool key --clearmodifiers ctrl+a"))
-      (awful.spawn.easy_async_with_shell
-       "xdotool key --clearmodifiers ctrl+c"
-       cb))))
+  (let [xsel (executable-find "xsel")
+        _ (shellout (.. xsel " --clipboard --clear"))
+        ;; clb (shellout (.. xsel " -ob"))
+        pri (shellout (.. xsel " -op"))]
+    (when (empty? pri)
+      (awful.spawn.with_shell
+       "xdotool key --clearmodifiers ctrl+a"))
+    (awful.spawn.easy_async_with_shell
+     "xdotool key --clearmodifiers ctrl+c"
+     cb)
+    (shellout (.. xsel " --primary --clear"))))
 
 (fn edit-with-emacs []
   (init)
