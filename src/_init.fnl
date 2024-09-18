@@ -62,7 +62,7 @@
 
 (awful.spawn.once "emacs" {:tag (-?> screen (. 1) (. :tags) (. 1))
                            :instance :emacs
-                           :screen "DP-4"}
+                           :screen screen.primary.index}
                   (fn [c] (= c.class :Emacs)))
 
 ;; spawn.once doesn't work for Brave and that makes you do some stupid shit like this. I have to manually check if it's

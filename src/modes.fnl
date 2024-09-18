@@ -1,5 +1,6 @@
 (local awful (require :awful))
 (local hotkeys_popup (require :awful.hotkeys_popup))
+(local {: all-screens } (require :core))
 (local gears (require :gears))
 (local menubar (require :menubar))
 (local apps (require :apps))
@@ -18,9 +19,9 @@
    :pattern [:Escape]
    :handler (fn [mode] (mode.stop))}])
 
-(fn jump-to-tag [abs-idx]
-  (let [cur-idx (. (awful.tag.selected) :index)]
-    (awful.tag.viewidx (- abs-idx cur-idx))))
+(fn jump-to-tag [tag]
+  (awful.tag.viewmore [tag] tag.screen 1)
+  (set client.focus (first tag.screen.clients)))
 
 (local
  root
@@ -44,19 +45,15 @@
     :handler (fn [mode]
                (awful.tag.viewnext)
                (mode.start :tags))}
+   {:description "tags"
+    :pattern ["l"]
+    :handler (fn [mode] (mode.start :tags))}
    {:description "move to tag"
     :pattern ["t"]
     :handler (fn [mode] (mode.start :move-to-tag))}
    {:description "enter client mode"
     :pattern [:Escape]
-    :handler (fn [mode] (mode.stop))}]
-
-  (fcollect [i 1 (length (. (awful.screen.focused) :tags))]
-    {:description (.. "tag" (tostring i))
-     :pattern [(tostring i)]
-     :handler (fn [mode]
-                (jump-to-tag i)
-                (mode.stop))})))
+    :handler (fn [mode] (mode.stop))}]))
 
 (local
  shrink-widen
@@ -288,29 +285,42 @@
     :handler (fn [_] (awful.tag.viewprev))}
    {:description "next tag"
     :pattern ["]"]
-    :handler (fn [_] (awful.tag.viewnext))}]
+    :handler (fn [_] (awful.tag.viewnext))}
+   {:description "move to tag"
+    :pattern ["t"]
+    :handler (fn [mode] (mode.start :move-to-tag))}]
+  (->> (all-screens)
+       (mapcat (fn [x] x.tags))
+       (map (fn [tag]
+              {:description tag.name
+               :pattern [tag.name]
+               :handler (fn [mode]
+                          (jump-to-tag tag)
+                          (mode.stop))})))
   esc-and-root))
 
-(fn move-win-to-tag [tag-idx]
+(fn move-win-to-tag [tag]
   (when (not client.focus)
     (set client.focus (. (. (awful.screen.focused) :clients) 1)))
   (when client.focus
-    (let [clnt client.focus
-          tag (. client.focus.screen.tags tag-idx)]
+    (let [clnt client.focus]
       (client.focus:move_to_tag tag)
-      (jump-to-tag tag-idx)
+      (jump-to-tag tag)
       (set client.focus clnt))))
 
 (local
  move-to-tag
  (concat
-  (fcollect [i 1 (length (. (awful.screen.focused) :tags))]
-    {:description (tostring i)
-     :pattern [(tostring i)]
-     :handler (fn [mode]
-                (move-win-to-tag i)
-                (mode.stop))})
+  (->> (all-screens)
+       (mapcat (fn [x] x.tags))
+       (map (fn [tag]
+              {:description tag.name
+               :pattern [tag.name]
+               :handler (fn [mode]
+                          (move-win-to-tag tag)
+                          (mode.stop))})))
   esc-and-root))
+
 
 {: root
  : windows

@@ -3,13 +3,13 @@ cfg_dir = home .. "/.config/awesome/"
 
 package.cpath =
   package.cpath .. ";"
-  .. home .. "/.luarocks/lib/lua/5.3/?.so;"
-  .. home .. "/.luarocks/lib/lua/5.3/?/?.so"
+  .. home .. "/.luarocks/lib/lua/5.4/?.so;"
+  .. home .. "/.luarocks/lib/lua/5.4/?/?.so"
 
 package.path =
   package.path .. ";"
-  .. home .. "/.luarocks/share/lua/5.3/?.lua;"
-  .. home .. "/.luarocks/share/lua/5.3/?/?.lua;"
+  .. home .. "/.luarocks/share/lua/5.4/?.lua;"
+  .. home .. "/.luarocks/share/lua/5.4/?/?.lua;"
   .. cfg_dir .. "lib/?.lua;"
   .. cfg_dir .. "lib/?/init.lua;"
 
