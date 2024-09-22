@@ -5,10 +5,12 @@
 (local {:client_keys client_keys
         :client_buttons client_buttons} (require :keybindings))
 (local {:merge merge} (require :fun))
+(local browser (require :browser))
+(local media (require :media))
 
 (set awful.rules.rules
-     [;; All clients will match this rule
-      {:rule []
+     [
+      {:rule [] ; All clients will match this rule
        :properties {:useless_gap 10
                     :border_width beautiful.border_width
                     :border_color beautiful.border_normal
@@ -18,13 +20,7 @@
                     :buttons client_buttons
                     :screen awful.screen.preferred
                     :placement (+ awful.placement.no_overlap
-                                  awful.placement.no_offscreen)
-                    }}
-      {:rule_any {:class ["Brave browser"]
-                  :name ["Open File"]}
-       :properties {:floating true
-                    :placement
-                    (fn [c] (awful.placement.centered c))}}
+                                  awful.placement.no_offscreen)}}
       {:rule_any {:instance [:DTA    ; Firefox addon DownThemAll.
                              :copyq  ; Includes session name in class.
                              :pinentry]
@@ -38,8 +34,10 @@
                           :veromix
                           :xtightvncviewer
                           :vlc]
-                  ;; Note that the name property shown in xprop might be set slightly after creation of the client
-                  ;; and the name shown there might not match defined rules here.
+                  ;; Note that the name property shown in xprop might
+                  ;; be set slightly after creation of the client and
+                  ;; the name shown there might not match defined
+                  ;; rules here.
                   :name ["Event Tester"  ; xev.
                          ]
                   :role [:AlarmWindow    ;  Thunderbird's calendar.
@@ -52,14 +50,8 @@
       {:rule_any {:type [:normal :dialog]}
        :properties {:titlebars_enabled true}}
 
-      {:rule {:class :mpv}
-       :properties {:ontop true
-                    :floating true}}
-
-     {:rule_any {:class ["Brave browser"]
-                  :name ["YouTube Music.*"]}
-       :properties {:floating false
-                    :screen 2}}])
+      (table.unpack browser.rules)
+      (table.unpack media.rules)])
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; persist window geometry for floating windows ;;

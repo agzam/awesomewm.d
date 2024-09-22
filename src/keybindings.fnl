@@ -7,6 +7,7 @@
         : superkey
         : all-clients
         : map-key
+        : simulate-key
         } (require :core))
 (local { : edit-with-emacs } (require :emacs))
 
@@ -106,7 +107,12 @@
            (fn []
              (let [cmd "emacsclient -e '(clipboard->tts)' &"]
                (awful.spawn.with_shell cmd)))
-           "selection to TTS" :client)))
+           "selection to TTS" :client)
+
+  ;; copy-paste like on Mac
+  (simulate-key [modkey] :c [:Control] :c)
+  (simulate-key [modkey] :x [:Control] :x)
+  (simulate-key [modkey] :v [:Control] :v)))
 
 (local
  client_keys
@@ -149,14 +155,14 @@
                     :mouse_click
                     {:raise true})))
   (awful.button
-   [modkey] 1
+   [:Shift modkey] 1
    (fn [c]
      (c:emit_signal "request::activate"
                     :mouse_click
                     {:raise true})
      (awful.mouse.client.move c)))
   (awful.button
-   [modkey] 3
+   [:Shift modkey] 3
    (fn [c]
      (c:emit_signal "request::activate"
                     :mouse_click

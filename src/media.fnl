@@ -45,5 +45,11 @@
            (focus-or-launch nil current.window))))
        false))))
 
+(var rules
+     [{:rule {:class :mpv}
+       :properties {:ontop true
+                    :floating true}}])
+
 { : activate-ytm-player
-  : ytm-press-key }
+  : ytm-press-key
+  : rules}

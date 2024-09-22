@@ -45,6 +45,42 @@
       (set client.focus bb))
    false))
 
+(var rules
+     [{:rule_any {:instance ["brave"]}
+       :properties
+       {:buttons
+        (gears.table.join
+         ;; Cmd+LeftClick just like on Mac
+         (awful.button
+          [modkey] 1
+          (fn [c]
+            (root.fake_input :key_release modkey)
+            (root.fake_input :key_press :Control_L)
+            (root.fake_input :button_press 1)
+            (gears.timer.weak_start_new
+             0.1 #(root.fake_input :key_release :Control_L) false)))
+
+         ;; Shift+Cmd+LeftClick just like on Mac
+         (awful.button
+          [:Shift modkey] 1
+          (fn [c]
+            (root.fake_input :key_release modkey)
+            (root.fake_input :key_press :Control_L)
+            (root.fake_input :button_press 1)
+            (gears.timer.weak_start_new
+             0.1 #(root.fake_input :key_release :Control_L) false))))}}
+
+      {:rule_any {:class ["Brave browser"]
+                  :name ["Open File"]}
+       :properties {:floating true
+                    :placement
+                    (fn [c] (awful.placement.centered c))}}
+
+      {:rule_any {:class ["Brave browser"]
+                  :name ["YouTube Music.*"]}
+       :properties {:floating false
+                    :screen 2}}])
+
 { : browser-local-keys
   : open-private-in-new-tab
-  }
+  : rules}
