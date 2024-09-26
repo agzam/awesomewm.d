@@ -17,6 +17,7 @@
   (simulate-key [:Control] :j [] :Down)
   ;; (simulate-key [:Control] :k [] :Up)
   (simulate-key [modkey] :t [:Control] :t)
+  (simulate-key [:Shift modkey] :t [:Shift :Control] :t)
   (simulate-key [modkey] :w [:Control] :w)
   (simulate-key [:Mod1] :BackSpace [:Control] :BackSpace)
   (->> (range 1 9)
