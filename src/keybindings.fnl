@@ -77,7 +77,7 @@
            (fn []
              (modalawesome.init
               {:modkey :Mod5
-               :default_mode :root
+               :default_mode :root-mode
                :modes (require :modes)
                :stop_name "⭐"
                :keybidings {}}))

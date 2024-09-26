@@ -14,74 +14,47 @@
    :handler (fn [] (hotkeys_popup.show_help))}
   {:description "root"
    :pattern {:Mod4 " "}
-   :handler (fn [mode] (mode.start :root))}
+   :handler (fn [mode] (mode.start :root-mode))}
   {:description "escape"
    :pattern [:Escape]
    :handler (fn [mode] (mode.stop))}])
 
-(fn jump-to-tag [tag]
-  (awful.tag.viewmore [tag] tag.screen 1)
-  (set client.focus (first tag.screen.clients)))
 
-(fn move-win-to-other-screen []
-  (when client.focus
-    (let [c client.focus]
-      (c:move_to_screen)
-      (gears.timer.weak_start_new
-       0.01
-       (fn []
-         (apps.focus-or-launch c.class)
-         false)))))
-
-(fn move-win-to-tag [tag]
-  ;; if no client on focus, grab first window on the current screen
-  (let [cur-scr (awful.screen.focused)]
-    (when (not client.focus)
-      (set client.focus (first cur-scr.clients)))
-
-    ;; tag from other screen, let's move the window over there
-    (when (not= tag.screen cur-scr)
-      (move-win-to-other-screen))
-    (when client.focus
-      (let [clnt client.focus]
-        (client.focus:move_to_tag tag)
-        (jump-to-tag tag)
-        (set client.focus clnt)))))
 
 (local
- root
+ root-mode
  (concat
   [{:description "windows"
     :pattern [:w]
-    :handler (fn [mode] (mode.start :windows))}
+    :handler (fn [mode] (mode.start :windows-mode))}
    {:description "apps"
     :pattern [:a]
-    :handler (fn [mode] (mode.start :apps))}
+    :handler (fn [mode] (mode.start :apps-mode))}
    {:description "media"
     :pattern [:m]
-    :handler (fn [mode] (mode.start :media))}
+    :handler (fn [mode] (mode.start :media-mode))}
    {:description "prev tag"
     :pattern ["[\\[]"]
     :handler (fn [mode]
                (awful.tag.viewprev)
-               (mode.start :tags))}
+               (mode.start :tags-mode))}
    {:description "next tag"
     :pattern ["]"]
     :handler (fn [mode]
                (awful.tag.viewnext)
-               (mode.start :tags))}
+               (mode.start :tags-mode))}
    {:description "tags"
     :pattern ["l"]
-    :handler (fn [mode] (mode.start :tags))}
+    :handler (fn [mode] (mode.start :tags-mode))}
    {:description "move to tag"
     :pattern ["t"]
-    :handler (fn [mode] (mode.start :move-to-tag))}
+    :handler (fn [mode] (mode.start :move-to-tag-mode))}
    {:description "enter client mode"
     :pattern [:Escape]
-    :handler (fn [mode] (mode.stop))}]))
+    :handler (fn [mode] (mode.stop))}
 
 (local
- shrink-widen
+ shrink-widen-mode
  (concat
   [{:description "widen horizontally"
     :pattern ["]"]
@@ -91,8 +64,9 @@
     :handler (fn [_] (awful.tag.incmwfact -0.01))}]
   esc-and-root))
 
+
 (local
- windows
+ windows-mode
  (concat
   [{:description "other window"
     :pattern [:w]
@@ -142,7 +116,7 @@
    {:description "move to other screen"
     :pattern [:o]
     :handler (fn [mode]
-               (move-win-to-other-screen)
+               (apps.move-win-to-other-screen)
                (mode.stop))}
    {:description "window minimize"
     :pattern ["-"]
@@ -172,11 +146,11 @@
                  (mode.stop)))}
    {:description "shrink/widen horizontally"
     :pattern ["[]\\[]"]
-    :handler (fn [mode] (mode.start :shrink-widen))}]
+    :handler (fn [mode] (mode.start :shrink-widen-mode))}]
   esc-and-root))
 
 (local
- apps
+ apps-mode
  (concat
   [{:description "Emacs"
     :pattern [:e]
@@ -227,7 +201,7 @@
   esc-and-root))
 
 (local
- media
+ media-mode
  (concat
   [{:description "open player app"
     :pattern [:a]
@@ -296,7 +270,7 @@
   esc-and-root))
 
 (local
- tags
+ tags-mode
  (concat
   [{:description "prev tag"
     :pattern ["[\\[]"]
@@ -306,19 +280,19 @@
     :handler (fn [_] (awful.tag.viewnext))}
    {:description "move to tag"
     :pattern ["t"]
-    :handler (fn [mode] (mode.start :move-to-tag))}]
+    :handler (fn [mode] (mode.start :move-to-tag-mode))}]
   (->> (all-screens)
        (mapcat (fn [x] x.tags))
        (map (fn [tag]
               {:description tag.name
                :pattern [tag.name]
                :handler (fn [mode]
-                          (jump-to-tag tag)
+                          (apps.jump-to-tag tag)
                           (mode.stop))})))
   esc-and-root))
 
 (local
- move-to-tag
+ move-to-tag-mode
  (concat
   (->> (all-screens)
        (mapcat (fn [x] x.tags))
@@ -326,16 +300,15 @@
               {:description tag.name
                :pattern [tag.name]
                :handler (fn [mode]
-                          (move-win-to-tag tag)
+                          (apps.move-win-to-tag tag)
                           (mode.stop))})))
   esc-and-root))
 
 
-{: root
- : windows
- : apps
- : shrink-widen
- : media
- : tags
- : move-to-tag
- }
+{: root-mode
+ : windows-mode
+ : apps-mode
+ : shrink-widen-mode
+ : media-mode
+ : tags-mode
+ : move-to-tag-mode}
