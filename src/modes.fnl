@@ -23,6 +23,31 @@
   (awful.tag.viewmore [tag] tag.screen 1)
   (set client.focus (first tag.screen.clients)))
 
+(fn move-win-to-other-screen []
+  (when client.focus
+    (let [c client.focus]
+      (c:move_to_screen)
+      (gears.timer.weak_start_new
+       0.01
+       (fn []
+         (apps.focus-or-launch c.class)
+         false)))))
+
+(fn move-win-to-tag [tag]
+  ;; if no client on focus, grab first window on the current screen
+  (let [cur-scr (awful.screen.focused)]
+    (when (not client.focus)
+      (set client.focus (first cur-scr.clients)))
+
+    ;; tag from other screen, let's move the window over there
+    (when (not= tag.screen cur-scr)
+      (move-win-to-other-screen))
+    (when client.focus
+      (let [clnt client.focus]
+        (client.focus:move_to_tag tag)
+        (jump-to-tag tag)
+        (set client.focus clnt)))))
+
 (local
  root
  (concat
@@ -117,15 +142,8 @@
    {:description "move to other screen"
     :pattern [:o]
     :handler (fn [mode]
-               (when client.focus
-                 (let [c client.focus]
-                   (c:move_to_screen)
-                   (gears.timer.weak_start_new
-                    0.01
-                    (fn []
-                      (apps.focus-or-launch c.class)
-                      false))
-                   (mode.stop))))}
+               (move-win-to-other-screen)
+               (mode.stop))}
    {:description "window minimize"
     :pattern ["-"]
     :handler (fn [mode]
@@ -298,15 +316,6 @@
                           (jump-to-tag tag)
                           (mode.stop))})))
   esc-and-root))
-
-(fn move-win-to-tag [tag]
-  (when (not client.focus)
-    (set client.focus (. (. (awful.screen.focused) :clients) 1)))
-  (when client.focus
-    (let [clnt client.focus]
-      (client.focus:move_to_tag tag)
-      (jump-to-tag tag)
-      (set client.focus clnt))))
 
 (local
  move-to-tag

@@ -9,8 +9,7 @@
 (local media (require :media))
 
 (set awful.rules.rules
-     [
-      {:rule [] ; All clients will match this rule
+     [{:rule [] ; All clients will match this rule
        :properties {:useless_gap 10
                     :border_width beautiful.border_width
                     :border_color beautiful.border_normal
