@@ -19,7 +19,6 @@
   (simulate-key [modkey] :t [:Control] :t)
   (simulate-key [:Shift modkey] :t [:Shift :Control] :t)
   (simulate-key [modkey] :w [:Control] :w)
-  (simulate-key [:Mod1] :BackSpace [:Control] :BackSpace)
   (->> (range 1 9)
        (map #(let [k (tostring $1)] (simulate-key [modkey] k [:Control] k)))
        (flatten))))
