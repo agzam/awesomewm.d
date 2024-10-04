@@ -48,7 +48,7 @@
 (var rules
      [{:rule {:class :mpv}
        :properties {:ontop true
-                    :floating true}}])
+                    :floating false}}])
 
 { : activate-ytm-player
   : ytm-press-key
