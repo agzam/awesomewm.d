@@ -3,7 +3,7 @@
 (local {: simulate-key } (require :core))
 (local core (require :core))
 (local {: modkey } core)
-
+(local keybindings (require :keybindings))
 
 (local
  browser-local-keys
@@ -50,6 +50,10 @@
        :properties
        {:buttons
         (gears.table.join
+         ;; I have to re-add global client buttons
+         ;; otherwise browser will not resize-move, etc.
+         keybindings.client-buttons
+
          ;; Cmd+LeftClick just like on Mac
          (awful.button
           [modkey] 1

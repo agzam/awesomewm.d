@@ -2,8 +2,7 @@
 (local awful (require :awful))
 (local gears (require :gears))
 (local wibox (require :wibox))
-(local {:client_keys client_keys
-        :client_buttons client_buttons} (require :keybindings))
+(local keybindings (require :keybindings))
 (local {:merge merge} (require :fun))
 (local browser (require :browser))
 (local media (require :media))
@@ -15,8 +14,8 @@
                     :border_color beautiful.border_normal
                     :focus awful.client.focus.filter
                     :raise true
-                    :keys client_keys
-                    :buttons client_buttons
+                    :keys keybindings.client-keys
+                    :buttons keybindings.client-buttons
                     :screen awful.screen.preferred
                     :placement (+ awful.placement.no_overlap
                                   awful.placement.no_offscreen)}}

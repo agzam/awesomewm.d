@@ -12,7 +12,7 @@
 (local { : edit-with-emacs } (require :emacs))
 
 ;; Keyboard map indicator and switcher
-(local my_keyboard_layout (awful.widget.keyboardlayout))
+(local my-keyboard-layout (awful.widget.keyboardlayout))
 
 (fn focus-byidx-global [i c]
   (let [old awful.client.visible]
@@ -71,7 +71,7 @@
   :filterClients all-clients})
 
 (local
- global_keys
+ global-keys
  (gears.table.join
   (map-key [modkey] :space
            (fn []
@@ -110,6 +110,7 @@
            "selection to TTS" :client)
 
   ;; copy-paste like on Mac
+  (simulate-key [modkey] :a [:Control] :a)
   (simulate-key [modkey] :c [:Control] :c)
   (simulate-key [modkey] :x [:Control] :x)
   (simulate-key [modkey] :v [:Control] :v)
@@ -125,7 +126,7 @@
       #(root.fake_input :key_release :Alt_L) false)))))
 
 (local
- client_keys
+ client-keys
  (gears.table.join
   (map-key [modkey :Control] :Return
            (fn [c]
@@ -144,7 +145,7 @@
              (c:raise))
            "maximize horizontally" :client)))
 
-(root.keys global_keys)
+(root.keys global-keys)
 
 ;; Mouse bindings
 (local {: my_main_menu } (require :menu))
@@ -156,7 +157,7 @@
   (awful.button [] 5 awful.tag.viewprev)))
 
 (local
- client_buttons
+ client-buttons
  (gears.table.join
   (awful.button
    nil 1
@@ -165,14 +166,14 @@
                     :mouse_click
                     {:raise true})))
   (awful.button
-   [:Shift modkey] 1
+   [modkey :Mod1] 1 ; Cmd+Alt+LeftClick - move window
    (fn [c]
      (c:emit_signal "request::activate"
                     :mouse_click
                     {:raise true})
      (awful.mouse.client.move c)))
   (awful.button
-   [:Shift modkey] 3
+   [modkey :Mod1] 3 ; Cmd+Alt+RightClick - resize window
    (fn [c]
      (c:emit_signal "request::activate"
                     :mouse_click
@@ -181,7 +182,7 @@
 
 {: modkey
  : superkey
- : client_keys
- : global_keys
- : my_keyboard_layout
- : client_buttons}
+ : client-keys
+ : global-keys
+ : my-keyboard-layout
+ : client-buttons}
