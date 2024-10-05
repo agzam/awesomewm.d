@@ -115,11 +115,13 @@
   (simulate-key [modkey] :x [:Control] :x)
   (simulate-key [modkey] :v [:Control] :v)
 
-  ;; alt-backspace like on Mac. For some strange reasons, specifically
-  ;; Alt_L gets stuck on this one, had to do it this way
-  (map-key
+  (awful.key
    [:Mod1] :BackSpace
+    ;; alt-backspace like on Mac. For some strange reasons, specifically
+    ;; Alt_L gets stuck on this one, had to do it this way
    (fn []
+     (root.fake_input :key_release :Alt_R)
+     (root.fake_input :key_release :BackSpace)
      (awful.key.execute [:Control] :BackSpace)
      (gears.timer.weak_start_new
       0.01
