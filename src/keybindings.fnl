@@ -10,6 +10,7 @@
         : simulate-key
         } (require :core))
 (local { : edit-with-emacs } (require :emacs))
+(local apps (require :apps))
 
 ;; Keyboard map indicator and switcher
 (local my-keyboard-layout (awful.widget.keyboardlayout))
@@ -102,7 +103,6 @@
            "Layout next" :layout)
   (map-key [modkey :Control] :o edit-with-emacs
            "edit with Emacs" :client)
-
   (map-key superkey "s"
            (fn []
              (let [cmd "emacsclient -e '(clipboard->tts)' &"]
@@ -117,15 +117,29 @@
 
   (awful.key
    [:Mod1] :BackSpace
-    ;; alt-backspace like on Mac. For some strange reasons, specifically
-    ;; Alt_L gets stuck on this one, had to do it this way
+   ;; alt-backspace like on Mac. For some strange reasons, specifically
+   ;; Alt_L gets stuck on this one, had to do it this way
    (fn []
      (root.fake_input :key_release :Alt_R)
      (root.fake_input :key_release :BackSpace)
      (awful.key.execute [:Control] :BackSpace)
      (gears.timer.weak_start_new
       0.01
-      #(root.fake_input :key_release :Alt_L) false)))))
+      #(root.fake_input :key_release :Alt_L) false)))
+
+ (map-key
+  [modkey] "`"
+  (fn []
+    (let [c client.focus
+          nxt (when c
+                (-?>> (all-clients)
+                      (filter (fn [cl]
+                                (and (not= c.instance cl.instance)
+                                     (= c.class cl.class))))
+                      first))]
+      (when nxt
+        (apps.focus-or-launch nxt.class nxt.window))))
+  "next window" :client)))
 
 (local
  client-keys
