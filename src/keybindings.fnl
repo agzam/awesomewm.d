@@ -115,31 +115,53 @@
   (simulate-key [modkey] :x [:Control] :x)
   (simulate-key [modkey] :v [:Control] :v)
 
-  (awful.key
-   [:Mod1] :BackSpace
-   ;; alt-backspace like on Mac. For some strange reasons, specifically
-   ;; Alt_L gets stuck on this one, had to do it this way
-   (fn []
-     (root.fake_input :key_release :Alt_R)
-     (root.fake_input :key_release :BackSpace)
-     (awful.key.execute [:Control] :BackSpace)
-     (gears.timer.weak_start_new
-      0.01
-      #(root.fake_input :key_release :Alt_L) false)))
+  ;; (awful.key
+  ;;  [:Mod1] :BackSpace
+  ;;  ;; alt-backspace like on Mac. For some strange reasons, specifically
+  ;;  ;; Alt_L gets stuck on this one, had to do it this way
+  ;;  (fn []
+  ;;    (root.fake_input :key_release :Alt_R)
+  ;;    (root.fake_input :key_release :BackSpace)
+  ;;    (awful.key.execute [:Control] :BackSpace)
+  ;;    (gears.timer.weak_start_new
+  ;;     0.01
+  ;;     #(root.fake_input :key_release :Alt_L) false)))
 
- (map-key
-  [modkey] "`"
-  (fn []
-    (let [c client.focus
-          nxt (when c
-                (-?>> (all-clients)
-                      (filter (fn [cl]
-                                (and (not= c.instance cl.instance)
-                                     (= c.class cl.class))))
-                      first))]
-      (when nxt
-        (apps.focus-or-launch nxt.class nxt.window))))
-  "next window" :client)))
+  (map-key
+   [modkey] "`"
+   (fn []
+     (let [c client.focus
+           nxt (when c
+                 (-?>> (all-clients)
+                       (filter (fn [cl]
+                                 (and (not= c.instance cl.instance)
+                                      (= c.class cl.class))))
+                       first))]
+       (when nxt
+         (apps.focus-or-launch nxt.class nxt.window))))
+   "next window" :client)))
+
+(awful.keygrabber
+ {:keybindings
+  [(awful.key
+    ;; Alt+Backspace works just like on Mac
+    {:modifiers [:Mod1] :key :BackSpace
+     :on_press (fn []
+                 (root.fake_input :key_release :Alt_R)
+                 (gears.timer.weak_start_new
+                  0.01
+                  (fn []
+                    (root.fake_input :key_release :BackSpace)
+                    (root.fake_input :key_press :Control_L)
+                    (root.fake_input :key_press :BackSpace)
+                    (root.fake_input :key_release :BackSpace)
+                    (root.fake_input :key_release :Control_L)
+                    (root.fake_input :key_press :Alt_R))
+                  false))})]
+  :stop_key :Mod1
+  :stop_event "release"
+  :export_keybindings true
+  :root_keybindings [(awful.key {:modifiers [:Mod1] :key :BackSpace})]})
 
 (local
  client-keys
