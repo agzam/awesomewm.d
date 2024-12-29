@@ -115,18 +115,6 @@
   (simulate-key [modkey] :x [:Control] :x)
   (simulate-key [modkey] :v [:Control] :v)
 
-  ;; (awful.key
-  ;;  [:Mod1] :BackSpace
-  ;;  ;; alt-backspace like on Mac. For some strange reasons, specifically
-  ;;  ;; Alt_L gets stuck on this one, had to do it this way
-  ;;  (fn []
-  ;;    (root.fake_input :key_release :Alt_R)
-  ;;    (root.fake_input :key_release :BackSpace)
-  ;;    (awful.key.execute [:Control] :BackSpace)
-  ;;    (gears.timer.weak_start_new
-  ;;     0.01
-  ;;     #(root.fake_input :key_release :Alt_L) false)))
-
   (map-key
    [modkey] "`"
    (fn []
@@ -139,7 +127,12 @@
                        first))]
        (when nxt
          (apps.focus-or-launch nxt.class nxt.window))))
-   "next window" :client)))
+   "next window" :client)
+
+  (map-key
+   [modkey :Control] "5"
+   (fn [] (awful.spawn "flameshot gui"))
+   "flameshot")))
 
 (awful.keygrabber
  {:keybindings
