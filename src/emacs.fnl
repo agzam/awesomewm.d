@@ -67,6 +67,15 @@ Useful for sending text from Emacs to text input of the app."
         (string.format "xdotool type --clearmodifiers '%s'" text)))
      false)))
 
+(fn browse-url-with-emacs [url]
+  (when (starts-with? url "http")
+    (let [cmd (string.format "emacsclient -e '(+process-external-url \"%s\")'" url)
+          emacs-cl (-?>> (all-clients)
+                         (filter (fn [c] (= c.class :Emacs)))
+                         first)]
+      (awful.spawn.with_shell cmd)
+      (awful.client.focus.byidx 0 emacs-cl))))
+
 (init)
 
 {
@@ -74,4 +83,5 @@ Useful for sending text from Emacs to text input of the app."
  : switch_to_client_and_paste
  : switch_to_app
  : switch_to_prev_app_and_type
+ : browse-url-with-emacs
  }

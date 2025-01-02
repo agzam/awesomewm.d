@@ -2,7 +2,8 @@
 (local gears (require :gears))
 (local {: simulate-key } (require :core))
 (local core (require :core))
-(local {: modkey } core)
+(local {: modkey : map-key : superkey : shellout : executable-find} core)
+(local { : browse-url-with-emacs } (require :emacs))
 (local keybindings (require :keybindings))
 
 (local
@@ -21,7 +22,23 @@
   (simulate-key [modkey] :w [:Control] :w)
   (->> (range 1 9)
        (map #(let [k (tostring $1)] (simulate-key [modkey] k [:Control] k)))
-       (flatten))))
+       (flatten))
+  (map-key
+   superkey :o
+   (fn []
+     (let [xsel (executable-find "xsel")
+           _ (awful.spawn.with_shell
+              (..
+               "xdotool key --clearmodifiers ctrl+l; "
+               "xdotool key --clearmodifiers ctrl+c key Escape;"
+               "xdotool keyup alt ctrl shift super"))]
+       (gears.timer.weak_start_new
+        0.2
+        (fn [ ]
+          (let [url (shellout (.. xsel " -ob"))]
+            (browse-url-with-emacs url))
+          false))))
+   "browse with Emacs" :client)))
 
 (fn get-brave-client []
   (->> (core.all-clients)
