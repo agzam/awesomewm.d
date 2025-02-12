@@ -85,7 +85,14 @@
            "Main modal"
            :awesome)
   (map-key superkey :6 awesome.restart "reload awesome" :awesome)
-  (map-key [modkey :Control] :r awesome.restart "reload awesome" :awesome)
+  (map-key
+   [modkey :Control] :r
+   (fn []
+     (awful.spawn.with_shell
+      "/home/ag/.config/awesome/scripts/xrandr-settings.sh"
+      (fn []
+        (awesome.restart))))
+   "reload awesome" :awesome)
   ;; (map-key [modkey] "." (fn [] (awesome.emit_signal "bling::window_switcher::turn_on"))
   ;;          "window switcher" :group :client)
 

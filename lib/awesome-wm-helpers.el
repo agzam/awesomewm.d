@@ -206,8 +206,7 @@ Useful for sending text from Emacs to text input of the app."
     (add-to-list
      'display-buffer-alist
      `(,pattern
-       (display-buffer-reuse-window
-        display-buffer-in-direction)
+       (display-buffer-in-quadrant)
        (direction . ,(awesome--display-buffer-opposite-side))
        (window . root)
        (window-width . 0.30)))))
