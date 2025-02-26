@@ -1,5 +1,6 @@
 (local awful (require :awful))
 (local hotkeys_popup (require :awful.hotkeys_popup))
+(local core (require :core))
 
 (local menubar (require :menubar))
 (local terminal :kitty)
@@ -16,7 +17,7 @@
            (hotkeys_popup.show_help nil (awful.screen.focused)))]
         [:manual (.. terminal " -e man awesome")]
         ;; ["edit config" (.. editor_cmd " " awesome.conffile)]
-        [:restart awesome.restart]
+        [:restart core.restart]
         [:run
          (fn []
            (-?> (awful.screen.focused)

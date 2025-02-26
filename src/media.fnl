@@ -19,11 +19,11 @@
 
 (fn activate-ytm-player []
   (ytm-player-app-id
-   (fn [app-id]
+   (fn [_app-id]
      (let [fnd (-?>> (all-clients)
                      (filter
                       (fn [c]
-                        (= c.instance (.. "crx_" app-id))))
+                        (string.match c.name ".* YouTube Music$")))
                      first)]
        (if fnd
            (do

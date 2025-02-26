@@ -8,6 +8,7 @@
         : all-clients
         : map-key
         : simulate-key
+        : restart
         } (require :core))
 (local { : edit-with-emacs } (require :emacs))
 (local apps (require :apps))
@@ -87,11 +88,7 @@
   (map-key superkey :6 awesome.restart "reload awesome" :awesome)
   (map-key
    [modkey :Control] :r
-   (fn []
-     (awful.spawn.with_shell
-      "/home/ag/.config/awesome/scripts/xrandr-settings.sh"
-      (fn []
-        (awesome.restart))))
+   (fn [] (restart))
    "reload awesome" :awesome)
   ;; (map-key [modkey] "." (fn [] (awesome.emit_signal "bling::window_switcher::turn_on"))
   ;;          "window switcher" :group :client)

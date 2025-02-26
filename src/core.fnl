@@ -19,6 +19,12 @@
                (.. "echo '" txt "' | xsel -i -b")))
             (noti-obj.die naughty.notificationClosedReason.dismissedByUser))})))
 
+(fn restart []
+  (lame_dbg "restarting")
+  (awesome.restart)
+  (awful.spawn.with_shell
+   "/home/ag/.config/awesome/scripts/xrandr-settings.sh"))
+
 (fn all-screens []
   (icollect [_ s (ipairs screen)] (when s s)))
 
@@ -85,4 +91,5 @@ To be used for 'faking' input, when you need to rebind one keybinding to another
  : simulate-key
  : superkey
  : executable-find
+ : restart
  }

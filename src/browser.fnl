@@ -91,15 +91,16 @@
             (gears.timer.weak_start_new
              0.1 #(root.fake_input :key_release :Control_L) false))))}}
 
-      {:rule_any {:class ["Brave browser"]
+      {:rule_any {:class [:xdg-desktop-portal-gtk]
                   :name ["Open File"]}
        :properties {:floating true
-                    :placement
-                    (fn [c] (awful.placement.centered c))}}
+                    :titlebars_enabled true
+                    :placement (fn [c] (awful.placement.centered c))}}
 
-      {:rule_any {:class ["Brave browser"]
-                  :name ["YouTube Music.*"]}
+      {:rule_any {:class [:Brave-browser]
+                  :name ["YouTube Music"]}
        :properties {:floating false
+                    :tag "a"
                     :screen 2}}])
 
 { : browser-local-keys

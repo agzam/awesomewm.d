@@ -11,9 +11,12 @@
   (let [cl (-?>> (all-clients)
                  (filter
                   (fn [c]
-                    (if window-id
-                        (= c.window window-id)
-                        (= c.class app-class))))
+                    (and
+                     (not= c.role "pop-up")
+                     ;; (not= c.role )
+                     (if window-id
+                         (= c.window window-id)
+                         (= c.class app-class)))))
                  first)
         app-name (if (= app-class "Brave-browser") "Brave" app-class)]
     ;; if we find the matching client, we switch to it,
